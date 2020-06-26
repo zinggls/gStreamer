@@ -1,28 +1,19 @@
-﻿========================================================================
-    정적 라이브러리 : CyUSB 프로젝트 개요
-========================================================================
+﻿This directory contains source code for CyAPI C++ Static Library.
 
-응용 프로그램 마법사에서 이 CyUSB 라이브러리 프로젝트를 만들었습니다.
+DIRECTORY STRUCTURE
+	inc -> Header files.
+	src -> Source files.
+	CyUSB.vcproj -> VC++ Project file.
+	ReadMe.txt
+ 
+PROJECT FILE 
+	This project is created using Visual Studio 2015 Community edition.
 
-CyUSB 응용 프로그램을 구성하는 각 파일에 대한
-요약 설명이 포함되어 있습니다.
+PROJECT OUTPUT
+	Library created under the following location	
+	CyAPI lib : lib\$(Platform)\$(Configuration)\CyAPI.lib 
 
-
-CyUSB.vcxproj
-    응용 프로그램 마법사를 사용하여 생성한 VC++ 프로젝트의 기본 프로젝트 파일입니다. 파일을 생성한 Visual C++ 버전에 대한 정보와 응용 프로그램 마법사를 사용하여 선택한 플랫폼, 구성 및 프로젝트 기능에 대한 정보가 포함되어 있습니다.
-
-CyUSB.vcxproj.filters
-    응용 프로그램 마법사를 사용하여 생성된 VC++ 프로젝트의 필터 파일입니다. 이 파일에는 프로젝트의 파일과 필터 간의 연결 정보가 들어 있습니다. 이러한 연결은 특정 노드에서 유사한 확장명으로 그룹화된 파일을 표시하기 위해 IDE에서 사용됩니다. 예를 들어 ".cpp" 파일은 "소스 파일" 필터와 연결되어 있습니다.
-
-
-/////////////////////////////////////////////////////////////////////////////
-
-StdAfx.h, StdAfx.cpp
-    이 파일은 미리 컴파일된 헤더(PCH) 파일 CyUSB.pch와 미리 컴파일된 형식(PCT) 파일 StdAfx.obj를 빌드하는 데 사용됩니다.
-
-/////////////////////////////////////////////////////////////////////////////
-기타 참고:
-
-응용 프로그램 마법사에서 사용하는 "TODO:" 주석은 사용자가 추가하거나 사용자 지정해야 하는 소스 코드 부분을 나타냅니다.
-
-/////////////////////////////////////////////////////////////////////////////
+API GUIDE DOCUMENT
+	Please refer Cypress CyAPI Programmer's Reference document for API interface of this library.
+	You can find this document after installing FX3 SDK installer under following directory. 
+	Directory : Cypress\Cypress USBSuite\library\cpp\CyAPI.pdf or CyAPI.chm

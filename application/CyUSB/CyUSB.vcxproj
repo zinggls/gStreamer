@@ -134,11 +134,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CyAPI.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="inc\CyAPI.h" />
     <ClInclude Include="inc\CyUSB30_def.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\CyAPI.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
