@@ -177,5 +177,13 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		errMsg = _T("Can't get USB Device instance");
 		return FALSE;
 	}
+
+	int devCnt = m_pUsbDev->DeviceCount();
+	for (int i = 0; i < devCnt; i++) {
+		m_pUsbDev->Open(i);
+		CString strDev;
+		strDev.Format(_T("(0x%04X - 0x%04X) %s"),m_pUsbDev->VendorID,m_pUsbDev->ProductID,CString(m_pUsbDev->FriendlyName).GetBuffer());
+		m_log.AddString(strDev);
+	}
 	return TRUE;
 }
