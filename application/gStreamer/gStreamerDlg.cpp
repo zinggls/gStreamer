@@ -103,7 +103,9 @@ BOOL CgStreamerDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	m_log.AddString(_T("Initializing..."));
-	m_pUsbDev = new CCyUSBDevice(this->m_hWnd, CYUSBDRV_GUID, true);
+
+	CString errMsg;
+	GetStreamerDevice(errMsg)==FALSE ? m_log.AddString(errMsg):m_log.AddString(_T("streamer device ok"));
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -165,4 +167,15 @@ void CgStreamerDlg::OnDestroy()
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 	delete m_pUsbDev;
+}
+
+
+BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
+{
+	m_pUsbDev = new CCyUSBDevice(this->m_hWnd, CYUSBDRV_GUID, true);
+	if (m_pUsbDev == NULL) {
+		errMsg = _T("Can't get USB Device instance");
+		return FALSE;
+	}
+	return TRUE;
 }

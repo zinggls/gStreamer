@@ -37,4 +37,5 @@ protected:
 public:
 	afx_msg void OnDestroy();
 	CListBox m_log;
+	BOOL GetStreamerDevice(CString &errMsg);
 };
