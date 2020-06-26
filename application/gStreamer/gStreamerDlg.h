@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "afxwin.h"
 
 class CCyUSBDevice;
 
@@ -35,4 +36,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();
+	CListBox m_log;
 };
