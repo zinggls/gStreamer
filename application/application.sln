@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gStreamer", "gStreamer\gStreamer.vcxproj", "{95DA00BD-0B08-4CF0-8208-34FBA42E3D15}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CyUSB", "CyUSB\CyUSB.vcxproj", "{8D81437C-D648-4AD5-931B-03414ECA46BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CyAPI", "CyAPI\CyAPI.vcxproj", "{8D81437C-D648-4AD5-931B-03414ECA46BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
