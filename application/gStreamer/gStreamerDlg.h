@@ -4,6 +4,7 @@
 
 #pragma once
 
+class CCyUSBDevice;
 
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
@@ -24,6 +25,7 @@ public:
 // 구현입니다.
 protected:
 	HICON m_hIcon;
+	CCyUSBDevice *m_pUsbDev;
 
 	// 생성된 메시지 맵 함수
 	virtual BOOL OnInitDialog();

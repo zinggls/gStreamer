@@ -6,6 +6,7 @@
 #include "gStreamer.h"
 #include "gStreamerDlg.h"
 #include "afxdialogex.h"
+#include <CyAPI.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
