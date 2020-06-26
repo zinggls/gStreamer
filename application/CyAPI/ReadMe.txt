@@ -11,7 +11,7 @@ PROJECT FILE
 
 PROJECT OUTPUT
 	Library created under the following location	
-	CyAPI lib : lib\$(Platform)\$(Configuration)\CyAPI.lib 
+	CyAPI lib : ..\bin\$(Platform)\$(Configuration)\CyAPI.lib 
 
 API GUIDE DOCUMENT
 	Please refer Cypress CyAPI Programmer's Reference document for API interface of this library.
