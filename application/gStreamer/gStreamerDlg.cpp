@@ -227,7 +227,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 						strEpt += (ssmaxburstToString(ept->ssmaxburst) + _T(" MaxBurst "));
 
 					strEpt += ((_T("(") + interfaceToString(i)) + _T(" - "));
-					strEpt += _T(")");
+					strEpt += (AddressToString(ept->Address) + _T(")"));
 
 					CString order;
 					order.Format(_T("[%d] "),j);
@@ -288,4 +288,11 @@ CString CgStreamerDlg::interfaceToString(int iface)
 	CString ifaceStr;
 	ifaceStr.Format(_T("%d"), iface);
 	return ifaceStr;
+}
+
+CString CgStreamerDlg::AddressToString(UCHAR address)
+{
+	CString addrStr;
+	addrStr.Format(_T("0x%02X"), address);
+	return addrStr;
 }

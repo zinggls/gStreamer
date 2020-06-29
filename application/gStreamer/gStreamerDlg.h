@@ -46,4 +46,5 @@ public:
 	CString MaxPktSizeToString(USHORT MaxPktSize);
 	CString ssmaxburstToString(UCHAR ssmaxburst);
 	CString interfaceToString(int iface);
+	CString AddressToString(UCHAR address);
 };
