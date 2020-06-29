@@ -219,12 +219,9 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 				// INTR, BULK and ISO endpoints are supported.
 				if ((ept->Attributes >= 1) && (ept->Attributes <= 3)) {
 					CString strEpt;
-					strEpt += AttributesToString(ept->Attributes);
-					strEpt += _T(" ");
-					strEpt += BinToString(ept->bIn);
-					strEpt += _T(" ");
-					strEpt += MaxPktSizeToString(ept->MaxPktSize);
-					strEpt += _T(" Bytes ");
+					strEpt += (AttributesToString(ept->Attributes) + _T(" "));
+					strEpt += (BinToString(ept->bIn) + _T(" "));
+					strEpt += (MaxPktSizeToString(ept->MaxPktSize) + _T(" Bytes "));
 
 					if (m_pUsbDev->BcdUSB == USB30MAJORVER) 
 						strEpt += (ssmaxburstToString(ept->ssmaxburst) + _T(" MaxBurst "));
