@@ -39,4 +39,6 @@ public:
 	CListBox m_log;
 	BOOL GetStreamerDevice(CString &errMsg);
 	CComboBox m_deviceCombo;
+	BOOL GetEndPoints();
+	afx_msg void OnCbnSelchangeDeviceCombo();
 };

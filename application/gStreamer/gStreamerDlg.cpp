@@ -68,6 +68,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DESTROY()
+	ON_CBN_SELCHANGE(IDC_DEVICE_COMBO, &CgStreamerDlg::OnCbnSelchangeDeviceCombo)
 END_MESSAGE_MAP()
 
 
@@ -194,5 +195,20 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		m_pUsbDev->Open(0);
 		m_deviceCombo.EnableWindow(TRUE);
 	}
+
+	GetEndPoints();
 	return TRUE;
+}
+
+
+BOOL CgStreamerDlg::GetEndPoints()
+{
+	return TRUE;
+}
+
+
+void CgStreamerDlg::OnCbnSelchangeDeviceCombo()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	GetEndPoints();
 }
