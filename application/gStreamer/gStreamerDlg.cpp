@@ -192,17 +192,38 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 	}
 	if (devCnt > 0) {
 		m_deviceCombo.SetCurSel(0);
-		m_pUsbDev->Open(0);
+		GetEndPoints(0);
 		m_deviceCombo.EnableWindow(TRUE);
 	}
-
-	GetEndPoints();
 	return TRUE;
 }
 
 
-BOOL CgStreamerDlg::GetEndPoints()
+BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 {
+	ASSERT(m_pUsbDev);
+	if (nSelect < 0) return FALSE;
+
+	if(m_pUsbDev->IsOpen()==true) m_pUsbDev->Close();
+	if (!m_pUsbDev->Open(nSelect)) return FALSE;
+
+	int interfaces = m_pUsbDev->AltIntfcCount() + 1;
+
+	for (int i = 0; i < interfaces; i++) {
+		if (m_pUsbDev->SetAltIntfc(i) == true) {
+
+			// Fill the EndPointsBox
+			for (int j = 1; j < m_pUsbDev->EndPointCount(); j++) {
+				CCyUSBEndPoint *ept = m_pUsbDev->EndPoints[j];
+
+				// INTR, BULK and ISO endpoints are supported.
+				if ((ept->Attributes >= 1) && (ept->Attributes <= 3)) {
+					CString strEpt;
+					strEpt += AttributesToString(ept->Attributes);
+				}
+			}
+		}
+	}
 	return TRUE;
 }
 
@@ -210,5 +231,22 @@ BOOL CgStreamerDlg::GetEndPoints()
 void CgStreamerDlg::OnCbnSelchangeDeviceCombo()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	GetEndPoints();
+	GetEndPoints(m_deviceCombo.GetCurSel());
+}
+
+
+CString CgStreamerDlg::AttributesToString(UCHAR attributes)
+{
+	if (attributes == 0)
+		return CString(_T("CONT"));
+	else if (attributes == 1)
+		return CString(_T("ISOC"));
+	else if (attributes == 2)
+		return CString(_T("BULK"));
+	else if (attributes == 3)
+		return CString(_T("INTR"));
+	else
+		ASSERT(FALSE);	//Not defined. Never should be here
+
+	return CString(_T(""));	//Just to make compiler happy
 }

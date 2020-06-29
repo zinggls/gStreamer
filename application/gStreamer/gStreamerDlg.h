@@ -39,6 +39,7 @@ public:
 	CListBox m_log;
 	BOOL GetStreamerDevice(CString &errMsg);
 	CComboBox m_deviceCombo;
-	BOOL GetEndPoints();
+	BOOL GetEndPoints(int nSelect);
 	afx_msg void OnCbnSelchangeDeviceCombo();
+	CString AttributesToString(UCHAR attributes);
 };
