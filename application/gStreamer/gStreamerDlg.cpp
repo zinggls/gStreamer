@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_DESTROY()
 	ON_CBN_SELCHANGE(IDC_DEVICE_COMBO, &CgStreamerDlg::OnCbnSelchangeDeviceCombo)
+	ON_CBN_SELCHANGE(IDC_ENDPOINT_COMBO, &CgStreamerDlg::OnCbnSelchangeEndpointCombo)
 END_MESSAGE_MAP()
 
 
@@ -243,6 +244,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 
 	if (m_endpointCombo.GetCount() > 0) {
 		m_endpointCombo.SetCurSel(0);
+		OnCbnSelchangeEndpointCombo();
 		m_endpointCombo.EnableWindow(TRUE);
 	}
 	return TRUE;
@@ -304,4 +306,40 @@ CString CgStreamerDlg::AddressToString(UCHAR address)
 	CString addrStr;
 	addrStr.Format(_T("0x%02X"), address);
 	return addrStr;
+}
+
+void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+
+	CString selStr;
+	m_endpointCombo.GetLBText(m_endpointCombo.GetCurSel(), selStr);
+
+	CgStreamerDlg::CEndPointInfo info;
+	if (getEndPointInfo(selStr, info) == FALSE) {
+		m_log.AddString(_T("getEndPointInfo failed"));
+		return;
+	}
+
+	if (!m_pUsbDev->SetAltIntfc(info.m_alt)) {
+		CString str;
+		str.Format(_T("SetAltIntfc failed with alt:%d"),info.m_alt);
+		m_log.AddString(str);
+		return;
+	}
+
+	CCyUSBEndPoint *endPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
+}
+
+BOOL CgStreamerDlg::getEndPointInfo(CString strCombo, CgStreamerDlg::CEndPointInfo &info)
+{
+	int nLoc = strCombo.Find(_T("("));
+	if (nLoc < 0) return FALSE;
+
+	CString alt = strCombo.Mid(nLoc+1, 1);
+	CString addr = strCombo.Mid(nLoc + 7, 2);
+
+	info.m_alt = _ttoi(alt.GetBuffer());
+	info.m_addr = _tcstol(addr,NULL,16);	//Hex(16) to Dec(10)
+	return TRUE;
 }

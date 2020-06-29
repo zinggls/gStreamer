@@ -22,6 +22,12 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
 
+	class CEndPointInfo {
+	public:
+		CEndPointInfo() :m_alt(-1), m_addr(-1) {}
+		int m_alt;
+		long m_addr;
+	};
 
 // 구현입니다.
 protected:
@@ -48,4 +54,6 @@ public:
 	CString interfaceToString(int iface);
 	CString AddressToString(UCHAR address);
 	CComboBox m_endpointCombo;
+	afx_msg void OnCbnSelchangeEndpointCombo();
+	BOOL getEndPointInfo(CString strCombo, CEndPointInfo &info);
 };
