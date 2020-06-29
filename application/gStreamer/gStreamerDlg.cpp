@@ -61,6 +61,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LOG_LIST, m_log);
 	DDX_Control(pDX, IDC_DEVICE_COMBO, m_deviceCombo);
+	DDX_Control(pDX, IDC_ENDPOINT_COMBO, m_endpointCombo);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -209,6 +210,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 
 	int interfaces = m_pUsbDev->AltIntfcCount() + 1;
 
+	m_endpointCombo.Clear();
 	for (int i = 0; i < interfaces; i++) {
 		if (m_pUsbDev->SetAltIntfc(i) == true) {
 
@@ -229,12 +231,19 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 					strEpt += ((_T("(") + interfaceToString(i)) + _T(" - "));
 					strEpt += (AddressToString(ept->Address) + _T(")"));
 
+					m_endpointCombo.AddString(strEpt);
+
 					CString order;
 					order.Format(_T("[%d] "),j);
 					m_log.AddString(order+strEpt);
 				}
 			}
 		}
+	}
+
+	if (m_endpointCombo.GetCount() > 0) {
+		m_endpointCombo.SetCurSel(0);
+		m_endpointCombo.EnableWindow(TRUE);
 	}
 	return TRUE;
 }

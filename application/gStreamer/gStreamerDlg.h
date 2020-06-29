@@ -47,4 +47,5 @@ public:
 	CString ssmaxburstToString(UCHAR ssmaxburst);
 	CString interfaceToString(int iface);
 	CString AddressToString(UCHAR address);
+	CComboBox m_endpointCombo;
 };
