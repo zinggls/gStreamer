@@ -226,6 +226,9 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 					if (m_pUsbDev->BcdUSB == USB30MAJORVER) 
 						strEpt += (ssmaxburstToString(ept->ssmaxburst) + _T(" MaxBurst "));
 
+					strEpt += ((_T("(") + interfaceToString(i)) + _T(" - "));
+					strEpt += _T(")");
+
 					CString order;
 					order.Format(_T("[%d] "),j);
 					m_log.AddString(order+strEpt);
@@ -278,4 +281,11 @@ CString CgStreamerDlg::ssmaxburstToString(UCHAR ssmaxburst)
 	CString burst;
 	burst.Format(_T("%d"), ssmaxburst);
 	return burst;
+}
+
+CString CgStreamerDlg::interfaceToString(int iface)
+{
+	CString ifaceStr;
+	ifaceStr.Format(_T("%d"), iface);
+	return ifaceStr;
 }

@@ -45,4 +45,5 @@ public:
 	CString BinToString(bool bIn);
 	CString MaxPktSizeToString(USHORT MaxPktSize);
 	CString ssmaxburstToString(UCHAR ssmaxburst);
+	CString interfaceToString(int iface);
 };
