@@ -60,6 +60,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LOG_LIST, m_log);
+	DDX_Control(pDX, IDC_DEVICE_COMBO, m_deviceCombo);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -178,12 +179,20 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		return FALSE;
 	}
 
+	m_deviceCombo.Clear();
+	m_deviceCombo.EnableWindow(FALSE);
 	int devCnt = m_pUsbDev->DeviceCount();
 	for (int i = 0; i < devCnt; i++) {
 		m_pUsbDev->Open(i);
 		CString strDev;
 		strDev.Format(_T("(0x%04X - 0x%04X) %s"),m_pUsbDev->VendorID,m_pUsbDev->ProductID,CString(m_pUsbDev->FriendlyName).GetBuffer());
 		m_log.AddString(strDev);
+		m_deviceCombo.AddString(strDev);
+	}
+	if (devCnt > 0) {
+		m_deviceCombo.SetCurSel(0);
+		m_pUsbDev->Open(0);
+		m_deviceCombo.EnableWindow(TRUE);
 	}
 	return TRUE;
 }
