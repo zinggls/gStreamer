@@ -222,6 +222,9 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 					strEpt += AttributesToString(ept->Attributes);
 					strEpt += _T(" ");
 					strEpt += BinToString(ept->bIn);
+					strEpt += _T(" ");
+					strEpt += MaxPktSizeToString(ept->MaxPktSize);
+					strEpt += _T(" Bytes ");
 
 					CString order;
 					order.Format(_T("[%d] "),j);
@@ -261,4 +264,11 @@ CString CgStreamerDlg::AttributesToString(UCHAR attributes)
 CString CgStreamerDlg::BinToString(bool bIn)
 {
 	if (bIn) return CString(_T("IN")); else return CString(_T("OUT"));
+}
+
+CString CgStreamerDlg::MaxPktSizeToString(USHORT MaxPktSize)
+{
+	CString size;
+	size.Format(_T("%u"), MaxPktSize);
+	return size;
 }

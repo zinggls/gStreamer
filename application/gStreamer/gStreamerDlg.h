@@ -43,4 +43,5 @@ public:
 	afx_msg void OnCbnSelchangeDeviceCombo();
 	CString AttributesToString(UCHAR attributes);
 	CString BinToString(bool bIn);
+	CString MaxPktSizeToString(USHORT MaxPktSize);
 };
