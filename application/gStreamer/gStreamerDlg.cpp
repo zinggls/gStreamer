@@ -181,7 +181,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		return FALSE;
 	}
 
-	m_deviceCombo.Clear();
+	m_deviceCombo.ResetContent();
 	m_deviceCombo.EnableWindow(FALSE);
 	int devCnt = m_pUsbDev->DeviceCount();
 	for (int i = 0; i < devCnt; i++) {
@@ -210,7 +210,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 
 	int interfaces = m_pUsbDev->AltIntfcCount() + 1;
 
-	m_endpointCombo.Clear();
+	m_endpointCombo.ResetContent();
 	for (int i = 0; i < interfaces; i++) {
 		if (m_pUsbDev->SetAltIntfc(i) == true) {
 
