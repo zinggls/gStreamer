@@ -226,6 +226,9 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 					strEpt += MaxPktSizeToString(ept->MaxPktSize);
 					strEpt += _T(" Bytes ");
 
+					if (m_pUsbDev->BcdUSB == USB30MAJORVER) 
+						strEpt += (ssmaxburstToString(ept->ssmaxburst) + _T(" MaxBurst "));
+
 					CString order;
 					order.Format(_T("[%d] "),j);
 					m_log.AddString(order+strEpt);
@@ -271,4 +274,11 @@ CString CgStreamerDlg::MaxPktSizeToString(USHORT MaxPktSize)
 	CString size;
 	size.Format(_T("%u"), MaxPktSize);
 	return size;
+}
+
+CString CgStreamerDlg::ssmaxburstToString(UCHAR ssmaxburst)
+{
+	CString burst;
+	burst.Format(_T("%d"), ssmaxburst);
+	return burst;
 }

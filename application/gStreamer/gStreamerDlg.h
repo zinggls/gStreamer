@@ -44,4 +44,5 @@ public:
 	CString AttributesToString(UCHAR attributes);
 	CString BinToString(bool bIn);
 	CString MaxPktSizeToString(USHORT MaxPktSize);
+	CString ssmaxburstToString(UCHAR ssmaxburst);
 };
