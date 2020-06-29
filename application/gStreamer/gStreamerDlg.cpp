@@ -220,6 +220,8 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 				if ((ept->Attributes >= 1) && (ept->Attributes <= 3)) {
 					CString strEpt;
 					strEpt += AttributesToString(ept->Attributes);
+					strEpt += _T(" ");
+					strEpt += BinToString(ept->bIn);
 				}
 			}
 		}
@@ -249,4 +251,10 @@ CString CgStreamerDlg::AttributesToString(UCHAR attributes)
 		ASSERT(FALSE);	//Not defined. Never should be here
 
 	return CString(_T(""));	//Just to make compiler happy
+}
+
+
+CString CgStreamerDlg::BinToString(bool bIn)
+{
+	if (bIn) return CString(_T("IN")); else return CString(_T("OUT"));
 }
