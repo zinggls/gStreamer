@@ -222,6 +222,10 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 					strEpt += AttributesToString(ept->Attributes);
 					strEpt += _T(" ");
 					strEpt += BinToString(ept->bIn);
+
+					CString order;
+					order.Format(_T("[%d] "),j);
+					m_log.AddString(order+strEpt);
 				}
 			}
 		}
