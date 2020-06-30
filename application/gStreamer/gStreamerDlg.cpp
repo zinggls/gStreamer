@@ -380,11 +380,13 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 		return;
 	}
 
-	if (checkPpxValidity() == CString(_T(""))) {
+	CString strRtn = checkPpxValidity();
+	if (strRtn == CString(_T(""))) {
 		m_ppxComboIndex = m_ppxCombo.GetCurSel();	//ppx검증이 성공하여 선택된 콤보값으로 m_ppxComboIndex 값을 업데이트
 		m_startButton.EnableWindow(TRUE);
 	}
 	else {
+		m_log.AddString(strRtn);
 		m_ppxCombo.SetCurSel(m_ppxComboIndex);	//ppx검증이 실패하였으므로 선택된 콤보값을 이전값으로 되돌림
 		m_log.AddString(_T("Chosen ppx is invalid, restore ppx value"));
 		m_startButton.EnableWindow(FALSE);
@@ -393,5 +395,18 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 
 CString CgStreamerDlg::checkPpxValidity()
 {
+	CString strPpx;
+	m_ppxCombo.GetLBText(m_ppxCombo.GetCurSel(), strPpx);
+	if (!checkMaxTransferLimit(m_pEndPt->MaxPktSize, _ttoi(strPpx))) {
+		CString err;
+		err.Format(_T("Total Xfer length limited to 4Mbyte, Lower PPX value:"));
+		return (err+ strPpx);
+	}
 	return _T("");	//PPX 검증 결과 이상무
+}
+
+BOOL CgStreamerDlg::checkMaxTransferLimit(USHORT MaxPktSize, int ppx)
+{
+	if ( (MaxPktSize*ppx) > MAX_TRANSFER_LENGTH) return FALSE;
+	return TRUE;
 }

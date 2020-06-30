@@ -8,6 +8,8 @@
 class CCyUSBDevice;
 class CCyUSBEndPoint;
 
+#define MAX_TRANSFER_LENGTH		0x400000		//4MByte
+
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
 {
@@ -64,4 +66,5 @@ public:
 	afx_msg void OnCbnSelchangePpxCombo();
 	CString checkPpxValidity();
 	int m_ppxComboIndex;
+	BOOL checkMaxTransferLimit(USHORT MaxPktSize,int ppx);
 };
