@@ -271,7 +271,6 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 	if (m_endpointCombo.GetCount() > 0) {
 		m_endpointCombo.SetCurSel(0);
 		OnCbnSelchangeEndpointCombo();
-		OnCbnSelchangePpxCombo();
 		m_endpointCombo.EnableWindow(TRUE);
 	}
 	else {
@@ -360,6 +359,7 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 	}
 
 	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
+	OnCbnSelchangePpxCombo();
 }
 
 BOOL CgStreamerDlg::getEndPointInfo(CString strCombo, CgStreamerDlg::CEndPointInfo &info)
