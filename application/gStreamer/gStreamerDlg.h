@@ -68,4 +68,5 @@ public:
 	int m_ppxComboIndex;
 	BOOL checkMaxTransferLimit(USHORT MaxPktSize,int ppx);
 	BOOL checkIsoPpxLimit(int ppx, CString& strErr);
+	afx_msg void OnBnClickedLogClearButton();
 };

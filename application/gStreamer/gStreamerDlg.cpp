@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_DEVICE_COMBO, &CgStreamerDlg::OnCbnSelchangeDeviceCombo)
 	ON_CBN_SELCHANGE(IDC_ENDPOINT_COMBO, &CgStreamerDlg::OnCbnSelchangeEndpointCombo)
 	ON_CBN_SELCHANGE(IDC_PPX_COMBO, &CgStreamerDlg::OnCbnSelchangePpxCombo)
+	ON_BN_CLICKED(IDC_LOG_CLEAR_BUTTON, &CgStreamerDlg::OnBnClickedLogClearButton)
 END_MESSAGE_MAP()
 
 
@@ -447,4 +448,10 @@ BOOL CgStreamerDlg::checkIsoPpxLimit(int ppx, CString& strErr)
 		}
 	}
 	return TRUE;
+}
+
+void CgStreamerDlg::OnBnClickedLogClearButton()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	m_log.ResetContent();
 }
