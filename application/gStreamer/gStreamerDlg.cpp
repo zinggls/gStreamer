@@ -266,6 +266,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 	if (m_endpointCombo.GetCount() > 0) {
 		m_endpointCombo.SetCurSel(0);
 		OnCbnSelchangeEndpointCombo();
+		OnCbnSelchangePpxCombo();
 		m_endpointCombo.EnableWindow(TRUE);
 	}
 	return TRUE;
@@ -383,6 +384,7 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 	CString strRtn = checkPpxValidity();
 	if (strRtn == CString(_T(""))) {
 		m_ppxComboIndex = m_ppxCombo.GetCurSel();	//ppx검증이 성공하여 선택된 콤보값으로 m_ppxComboIndex 값을 업데이트
+		m_log.AddString(_T("ppx validated ok"));
 		m_startButton.EnableWindow(TRUE);
 	}
 	else {
