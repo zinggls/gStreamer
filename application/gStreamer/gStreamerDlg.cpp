@@ -480,12 +480,16 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		return;
 	}
 	m_startButton.SetWindowTextW(_T("Stop"));
+	m_log.AddString(_T("Xfer thread started"));
 }
 
 UINT CgStreamerDlg::Xfer(LPVOID pParam)
 {
 	CgStreamerDlg *pDlg = (CgStreamerDlg*)pParam;
 	ASSERT(pDlg);
+	ASSERT(pDlg->m_pEndPt);
 
+	pDlg->m_startButton.SetWindowTextW(_T("Start"));
+	pDlg->m_log.AddString(_T("Xfer thread terminated"));
 	return 0;
 }
