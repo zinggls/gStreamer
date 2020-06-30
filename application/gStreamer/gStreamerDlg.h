@@ -72,4 +72,5 @@ public:
 	afx_msg void OnBnClickedStartButton();
 	CWinThread *m_pThread;
 	static UINT Xfer(LPVOID pParam);
+	int m_nQueueSize;
 };

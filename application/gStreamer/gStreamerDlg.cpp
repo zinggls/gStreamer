@@ -51,7 +51,7 @@ END_MESSAGE_MAP()
 
 
 CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL)
+	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -130,6 +130,10 @@ BOOL CgStreamerDlg::OnInitDialog()
 		m_queueCombo.AddString(strQueueVal);
 	}
 	m_queueCombo.SetCurSel(4);	//4 default Queue index, which is 16
+
+	CString strQ;
+	m_queueCombo.GetLBText(m_queueCombo.GetCurSel(), strQ);
+	m_nQueueSize = _ttoi(strQ);
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? m_log.AddString(errMsg):m_log.AddString(_T("streamer device ok"));
