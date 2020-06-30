@@ -368,6 +368,18 @@ BOOL CgStreamerDlg::getEndPointInfo(CString strCombo, CgStreamerDlg::CEndPointIn
 void CgStreamerDlg::OnCbnSelchangePpxCombo()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (m_pEndPt == NULL) {
+		m_log.AddString(_T("EndPointer is NULL"));
+		m_startButton.EnableWindow(FALSE);
+		return;
+	}
+
+	if (m_pEndPt->MaxPktSize == 0) {
+		m_log.AddString(_T("MaxPktSize is 0"));
+		m_startButton.EnableWindow(FALSE);
+		return;
+	}
+
 	if (checkPpxValidity() == CString(_T(""))) {
 		m_ppxComboIndex = m_ppxCombo.GetCurSel();	//ppx검증이 성공하여 선택된 콤보값으로 m_ppxComboIndex 값을 업데이트
 		m_startButton.EnableWindow(TRUE);
