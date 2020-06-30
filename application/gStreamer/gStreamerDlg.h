@@ -6,6 +6,7 @@
 #include "afxwin.h"
 
 class CCyUSBDevice;
+class CCyUSBEndPoint;
 
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
@@ -56,4 +57,5 @@ public:
 	CComboBox m_endpointCombo;
 	afx_msg void OnCbnSelchangeEndpointCombo();
 	BOOL getEndPointInfo(CString strCombo, CEndPointInfo &info);
+	CCyUSBEndPoint *m_pEndPt;
 };

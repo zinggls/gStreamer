@@ -51,7 +51,7 @@ END_MESSAGE_MAP()
 
 
 CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent)
+	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -328,7 +328,7 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 		return;
 	}
 
-	CCyUSBEndPoint *endPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
+	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
 }
 
 BOOL CgStreamerDlg::getEndPointInfo(CString strCombo, CgStreamerDlg::CEndPointInfo &info)
