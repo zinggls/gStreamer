@@ -479,6 +479,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		m_log.AddString(_T("Failure in creating thread"));
 		return;
 	}
+	m_startButton.SetWindowTextW(_T("Stop"));
 }
 
 UINT CgStreamerDlg::Xfer(LPVOID pParam)
