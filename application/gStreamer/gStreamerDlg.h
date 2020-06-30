@@ -59,4 +59,5 @@ public:
 	BOOL getEndPointInfo(CString strCombo, CEndPointInfo &info);
 	CCyUSBEndPoint *m_pEndPt;
 	CComboBox m_ppxCombo;
+	CComboBox m_queueCombo;
 };

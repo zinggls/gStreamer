@@ -63,6 +63,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_DEVICE_COMBO, m_deviceCombo);
 	DDX_Control(pDX, IDC_ENDPOINT_COMBO, m_endpointCombo);
 	DDX_Control(pDX, IDC_PPX_COMBO, m_ppxCombo);
+	DDX_Control(pDX, IDC_QUEUE_COMBO, m_queueCombo);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -116,6 +117,14 @@ BOOL CgStreamerDlg::OnInitDialog()
 		m_ppxCombo.AddString(strPpxVal);
 	}
 	m_ppxCombo.SetCurSel(5);	//5 default PPX index, which is 32
+
+	int queueValues[] = { 1,2,4,8,16,32,64 };
+	for (int i = 0; i < sizeof(queueValues) / sizeof(int); i++) {
+		CString strQueueVal;
+		strQueueVal.Format(_T("%d"), queueValues[i]);
+		m_queueCombo.AddString(strQueueVal);
+	}
+	m_queueCombo.SetCurSel(4);	//4 default Queue index, which is 16
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? m_log.AddString(errMsg):m_log.AddString(_T("streamer device ok"));
