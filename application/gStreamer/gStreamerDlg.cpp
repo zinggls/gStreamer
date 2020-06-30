@@ -51,7 +51,7 @@ END_MESSAGE_MAP()
 
 
 CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0)
+	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0), m_nPPX(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -123,6 +123,10 @@ BOOL CgStreamerDlg::OnInitDialog()
 	}
 	m_ppxComboIndex = 5;	//5 default PPX index, which is 32
 	m_ppxCombo.SetCurSel(m_ppxComboIndex);
+
+	CString strPpx;
+	m_ppxCombo.GetLBText(m_ppxComboIndex, strPpx);
+	m_nPPX = _ttoi(strPpx);
 
 	int queueValues[] = { 1,2,4,8,16,32,64 };
 	for (int i = 0; i < sizeof(queueValues) / sizeof(int); i++) {
@@ -399,9 +403,10 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 
 		CString strPpx;
 		m_ppxCombo.GetLBText(m_ppxComboIndex, strPpx);
+		m_nPPX = _ttoi(strPpx);
 
 		CString str;
-		str.Format(_T("ppx(%d) validated ok"),_ttoi(strPpx));
+		str.Format(_T("ppx(%d) validated ok"), m_nPPX);
 		m_log.AddString(str);
 		m_startButton.EnableWindow(TRUE);
 	}

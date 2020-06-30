@@ -74,4 +74,5 @@ public:
 	static UINT Xfer(LPVOID pParam);
 	int m_nQueueSize;
 	afx_msg void OnCbnSelchangeQueueCombo();
+	int m_nPPX;
 };
