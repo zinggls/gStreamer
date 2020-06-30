@@ -73,4 +73,5 @@ public:
 	CWinThread *m_pThread;
 	static UINT Xfer(LPVOID pParam);
 	int m_nQueueSize;
+	afx_msg void OnCbnSelchangeQueueCombo();
 };

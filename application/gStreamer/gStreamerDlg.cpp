@@ -77,6 +77,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_PPX_COMBO, &CgStreamerDlg::OnCbnSelchangePpxCombo)
 	ON_BN_CLICKED(IDC_LOG_CLEAR_BUTTON, &CgStreamerDlg::OnBnClickedLogClearButton)
 	ON_BN_CLICKED(IDC_START_BUTTON, &CgStreamerDlg::OnBnClickedStartButton)
+	ON_CBN_SELCHANGE(IDC_QUEUE_COMBO, &CgStreamerDlg::OnCbnSelchangeQueueCombo)
 END_MESSAGE_MAP()
 
 
@@ -130,10 +131,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 		m_queueCombo.AddString(strQueueVal);
 	}
 	m_queueCombo.SetCurSel(4);	//4 default Queue index, which is 16
-
-	CString strQ;
-	m_queueCombo.GetLBText(m_queueCombo.GetCurSel(), strQ);
-	m_nQueueSize = _ttoi(strQ);
+	OnCbnSelchangeQueueCombo();
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? m_log.AddString(errMsg):m_log.AddString(_T("streamer device ok"));
@@ -496,4 +494,12 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	pDlg->m_startButton.SetWindowTextW(_T("Start"));
 	pDlg->m_log.AddString(_T("Xfer thread terminated"));
 	return 0;
+}
+
+void CgStreamerDlg::OnCbnSelchangeQueueCombo()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	CString strQ;
+	m_queueCombo.GetLBText(m_queueCombo.GetCurSel(), strQ);
+	m_nQueueSize = _ttoi(strQ);
 }
