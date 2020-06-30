@@ -402,11 +402,39 @@ CString CgStreamerDlg::checkPpxValidity()
 		err.Format(_T("Total Xfer length limited to 4Mbyte, Lower PPX value:"));
 		return (err+ strPpx);
 	}
+
+	CString err;
+	if (!checkIsoPpxLimit(_ttoi(strPpx),err)) {
+		return err;
+	}
 	return _T("");	//PPX 검증 결과 이상무
 }
 
 BOOL CgStreamerDlg::checkMaxTransferLimit(USHORT MaxPktSize, int ppx)
 {
 	if ( (MaxPktSize*ppx) > MAX_TRANSFER_LENGTH) return FALSE;
+	return TRUE;
+}
+
+BOOL CgStreamerDlg::checkIsoPpxLimit(int ppx, CString& strErr)
+{
+	ASSERT(m_pUsbDev != NULL);
+	ASSERT(m_pEndPt != NULL);	//이 함수는 m_pEndPt가 NULL이 아닌 경우에만 호출될 수 있다
+
+	// HS/SS ISOC Xfers must use PPX >= 8
+	if ((m_pUsbDev->bSuperSpeed || m_pUsbDev->bHighSpeed) && (m_pEndPt->Attributes == 1)) {
+		if (ppx < 8) {
+			strErr.Format(_T("Highspeed or Superspeed ISOC xfers require at least 8 Packets per Xfer"));
+			return FALSE;
+		}
+
+		if (m_pUsbDev->bHighSpeed) {
+			if (ppx >128)
+			{
+				strErr.Format(_T("Hish Speed ISOC xfers does not support more than 128 Packets per transfer"));
+				return FALSE;
+			}
+		}
+	}
 	return TRUE;
 }
