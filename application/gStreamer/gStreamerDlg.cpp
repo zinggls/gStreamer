@@ -374,8 +374,7 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 	}
 	else {
 		m_ppxCombo.SetCurSel(m_ppxComboIndex);	//ppx검증이 실패하였으므로 선택된 콤보값을 이전값으로 되돌림
-		CString str(_T("Chosen ppx is invalid, restore ppx value"));
-		m_log.AddString(str);
+		m_log.AddString(_T("Chosen ppx is invalid, restore ppx value"));
 		m_startButton.EnableWindow(FALSE);
 	}
 }
