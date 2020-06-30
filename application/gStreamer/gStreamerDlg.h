@@ -58,4 +58,5 @@ public:
 	afx_msg void OnCbnSelchangeEndpointCombo();
 	BOOL getEndPointInfo(CString strCombo, CEndPointInfo &info);
 	CCyUSBEndPoint *m_pEndPt;
+	CComboBox m_ppxCombo;
 };

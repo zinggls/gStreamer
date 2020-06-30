@@ -62,6 +62,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LOG_LIST, m_log);
 	DDX_Control(pDX, IDC_DEVICE_COMBO, m_deviceCombo);
 	DDX_Control(pDX, IDC_ENDPOINT_COMBO, m_endpointCombo);
+	DDX_Control(pDX, IDC_PPX_COMBO, m_ppxCombo);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -107,6 +108,14 @@ BOOL CgStreamerDlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	m_log.AddString(_T("Initializing..."));
+
+	int ppxValues[] = { 1,2,4,8,16,32,64,128,256,512 };
+	for (int i = 0; i < sizeof(ppxValues) / sizeof(int); i++) {
+		CString strPpxVal;
+		strPpxVal.Format(_T("%d"),ppxValues[i]);
+		m_ppxCombo.AddString(strPpxVal);
+	}
+	m_ppxCombo.SetCurSel(5);	//5 default PPX index, which is 32
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? m_log.AddString(errMsg):m_log.AddString(_T("streamer device ok"));
