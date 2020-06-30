@@ -299,7 +299,7 @@ CString CgStreamerDlg::AttributesToString(UCHAR attributes)
 
 CString CgStreamerDlg::BinToString(bool bIn)
 {
-	if (bIn) return CString(_T("IN")); else return CString(_T("OUT"));
+	if (bIn) return CString(_T("IN   ")); else return CString(_T("OUT"));
 }
 
 CString CgStreamerDlg::MaxPktSizeToString(USHORT MaxPktSize)
