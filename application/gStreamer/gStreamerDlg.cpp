@@ -393,13 +393,26 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 	CString strRtn = checkPpxValidity();
 	if (strRtn == CString(_T(""))) {
 		m_ppxComboIndex = m_ppxCombo.GetCurSel();	//ppx검증이 성공하여 선택된 콤보값으로 m_ppxComboIndex 값을 업데이트
-		m_log.AddString(_T("ppx validated ok"));
+
+		CString strPpx;
+		m_ppxCombo.GetLBText(m_ppxComboIndex, strPpx);
+
+		CString str;
+		str.Format(_T("ppx(%d) validated ok"),_ttoi(strPpx));
+		m_log.AddString(str);
 		m_startButton.EnableWindow(TRUE);
 	}
 	else {
 		m_log.AddString(strRtn);
+
+		CString strPpx;
+		m_ppxCombo.GetLBText(m_ppxCombo.GetCurSel(), strPpx);
+
 		m_ppxCombo.SetCurSel(m_ppxComboIndex);	//ppx검증이 실패하였으므로 선택된 콤보값을 이전값으로 되돌림
-		m_log.AddString(_T("Chosen ppx is invalid, restore ppx value"));
+
+		CString str;
+		str.Format(_T("Chosen ppx(%d) is invalid, restore ppx value"),_ttoi(strPpx));
+		m_log.AddString(str);
 		m_startButton.EnableWindow(FALSE);
 	}
 }
