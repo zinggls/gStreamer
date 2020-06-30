@@ -514,6 +514,35 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 		memset(buffers[i], 0xEF, len);
 	}
 
+	CCyUSBEndPoint *pEndPt = pDlg->m_pEndPt;
+	while (true) {
+		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
+			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
+			if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
+				CString err;
+				err.Format(_T("BeginDataXfer failed at i=%d"),i);
+				pDlg->m_log.AddString(err);
+				break;
+			}
+
+			pEndPt->WaitForXfer(&inOvLap[i], INFINITE);
+
+			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
+
+			LONG rLen;
+			if (pEndPt->FinishDataXfer(buffers[i], rLen, &inOvLap[i], contexts[i])) {
+				CString str;
+				str.Format(_T("%d"), i);
+				pDlg->m_log.AddString(str);
+			}else{
+				CString err;
+				err.Format(_T("FinishDataXfer failed at i=%d"), i);
+				pDlg->m_log.AddString(err);
+				break;
+			}
+		}
+	}
+
 	// Deallocate memories
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 		delete [] buffers[i];
