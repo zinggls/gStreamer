@@ -496,6 +496,19 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	ASSERT(pDlg);
 	ASSERT(pDlg->m_pEndPt);
 
+	ULONG len = pDlg->m_pEndPt->MaxPktSize * pDlg->m_nPPX;
+	pDlg->m_pEndPt->SetXferSize(len);
+
+	// Allocate the arrays needed for queueing
+	PUCHAR			*buffers = new PUCHAR[pDlg->m_nQueueSize];
+	CCyIsoPktInfo	**isoPktInfos = new CCyIsoPktInfo*[pDlg->m_nQueueSize];
+	PUCHAR			*contexts = new PUCHAR[pDlg->m_nQueueSize];
+	OVERLAPPED		inOvLap[MAX_QUEUE_SIZE];
+
+	delete[] contexts;
+	delete[] isoPktInfos;
+	delete[] buffers;
+
 	pDlg->m_startButton.SetWindowTextW(_T("Start"));
 	pDlg->m_log.AddString(_T("Xfer thread terminated"));
 	return 0;
