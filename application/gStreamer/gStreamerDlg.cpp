@@ -74,6 +74,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_CBN_SELCHANGE(IDC_DEVICE_COMBO, &CgStreamerDlg::OnCbnSelchangeDeviceCombo)
 	ON_CBN_SELCHANGE(IDC_ENDPOINT_COMBO, &CgStreamerDlg::OnCbnSelchangeEndpointCombo)
+	ON_CBN_SELCHANGE(IDC_PPX_COMBO, &CgStreamerDlg::OnCbnSelchangePpxCombo)
 END_MESSAGE_MAP()
 
 
@@ -361,4 +362,20 @@ BOOL CgStreamerDlg::getEndPointInfo(CString strCombo, CgStreamerDlg::CEndPointIn
 	info.m_alt = _ttoi(alt.GetBuffer());
 	info.m_addr = _tcstol(addr,NULL,16);	//Hex(16) to Dec(10)
 	return TRUE;
+}
+
+void CgStreamerDlg::OnCbnSelchangePpxCombo()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (checkPpxValidity() == CString(_T(""))) {
+		m_startButton.EnableWindow(TRUE);
+	}
+	else {
+		m_startButton.EnableWindow(FALSE);
+	}
+}
+
+CString CgStreamerDlg::checkPpxValidity()
+{
+	return _T("");	//PPX 검증 결과 이상무
 }
