@@ -218,6 +218,10 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		GetEndPoints(0);
 		m_deviceCombo.EnableWindow(TRUE);
 	}
+	else {
+		m_log.AddString(_T("No device found"));
+		m_startButton.EnableWindow(FALSE);
+	}
 	return TRUE;
 }
 
@@ -268,6 +272,10 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 		OnCbnSelchangeEndpointCombo();
 		OnCbnSelchangePpxCombo();
 		m_endpointCombo.EnableWindow(TRUE);
+	}
+	else {
+		m_log.AddString(_T("No EndPoint found"));
+		m_startButton.EnableWindow(FALSE);
 	}
 	return TRUE;
 }
