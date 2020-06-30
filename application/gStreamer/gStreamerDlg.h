@@ -69,4 +69,7 @@ public:
 	BOOL checkMaxTransferLimit(USHORT MaxPktSize,int ppx);
 	BOOL checkIsoPpxLimit(int ppx, CString& strErr);
 	afx_msg void OnBnClickedLogClearButton();
+	afx_msg void OnBnClickedStartButton();
+	CWinThread *m_pThread;
+	static UINT Xfer(LPVOID pParam);
 };
