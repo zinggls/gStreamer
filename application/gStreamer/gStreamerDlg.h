@@ -63,4 +63,5 @@ public:
 	CButton m_startButton;
 	afx_msg void OnCbnSelchangePpxCombo();
 	CString checkPpxValidity();
+	int m_ppxComboIndex;
 };
