@@ -64,6 +64,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ENDPOINT_COMBO, m_endpointCombo);
 	DDX_Control(pDX, IDC_PPX_COMBO, m_ppxCombo);
 	DDX_Control(pDX, IDC_QUEUE_COMBO, m_queueCombo);
+	DDX_Control(pDX, IDC_START_BUTTON, m_startButton);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)

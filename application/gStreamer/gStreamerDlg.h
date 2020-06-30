@@ -60,4 +60,5 @@ public:
 	CCyUSBEndPoint *m_pEndPt;
 	CComboBox m_ppxCombo;
 	CComboBox m_queueCombo;
+	CButton m_startButton;
 };
