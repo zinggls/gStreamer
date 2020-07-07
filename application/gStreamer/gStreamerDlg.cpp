@@ -541,9 +541,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 			pEndPt->WaitForXfer(&pDlg->m_inOvLap[i], INFINITE);
 
-			if (!pDlg->m_bStart)
-				break;
-
 			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
@@ -557,6 +554,9 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
 				pDlg->L(_T("BeginDataXfer failed at i=%d"), i);
 			}
+
+			if (!pDlg->m_bStart && i == (pDlg->m_nQueueSize - 1))	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
+				break;
 		}
 	}
 
