@@ -502,6 +502,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		L(_T("Xfer thread terminating..."));
 		m_bStart = FALSE;
 		for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
+		WaitForSingleObject(m_pThread->m_hThread, INFINITE);
 		KillTimer(COUNT_REFRESH_TIMER);
 	}
 }
@@ -571,7 +572,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	delete [] isoPktInfos;
 	delete [] buffers;
 
-	pDlg->m_startButton.SetWindowTextW(_T("Start"));
 	pDlg->PostMessage(WM_THREAD_TERMINATED);
 	return 0;
 }
@@ -617,6 +617,7 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 
 LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 {
+	m_startButton.SetWindowTextW(_T("Start"));
 	L(_T("Xfer thread terminated"));
 	return 0;
 }
