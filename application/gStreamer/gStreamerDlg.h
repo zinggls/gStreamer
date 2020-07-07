@@ -80,4 +80,7 @@ public:
 	void L(const TCHAR* str, ...);
 	BOOL m_bStart;
 	OVERLAPPED	m_inOvLap[MAX_QUEUE_SIZE];
+	ULONGLONG m_ulSuccessCount;
+	ULONGLONG m_ulFailureCount;
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

@@ -12,6 +12,8 @@
 #define new DEBUG_NEW
 #endif
 
+#define COUNT_REFRESH_TIMER				1
+#define COUNT_REFRESH_TIMER_INTERVAL	100
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -52,6 +54,8 @@ END_MESSAGE_MAP()
 
 CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0), m_nPPX(0)
+	, m_ulSuccessCount(0)
+	, m_ulFailureCount(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -65,6 +69,8 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PPX_COMBO, m_ppxCombo);
 	DDX_Control(pDX, IDC_QUEUE_COMBO, m_queueCombo);
 	DDX_Control(pDX, IDC_START_BUTTON, m_startButton);
+	DDX_Text(pDX, IDC_SUCCESS_COUNT_EDIT, m_ulSuccessCount);
+	DDX_Text(pDX, IDC_FAILURE_COUNT_EDIT, m_ulFailureCount);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -78,6 +84,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_LOG_CLEAR_BUTTON, &CgStreamerDlg::OnBnClickedLogClearButton)
 	ON_BN_CLICKED(IDC_START_BUTTON, &CgStreamerDlg::OnBnClickedStartButton)
 	ON_CBN_SELCHANGE(IDC_QUEUE_COMBO, &CgStreamerDlg::OnCbnSelchangeQueueCombo)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -485,12 +492,14 @@ void CgStreamerDlg::OnBnClickedStartButton()
 			return;
 		}
 		m_startButton.SetWindowTextW(_T("Stop"));
+		SetTimer(COUNT_REFRESH_TIMER, COUNT_REFRESH_TIMER_INTERVAL, NULL);
 		L(_T("Xfer thread started"));
 	}
 	else {
 		L(_T("Xfer thread terminating..."));
 		m_bStart = FALSE;
 		for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
+		KillTimer(COUNT_REFRESH_TIMER);
 	}
 }
 
@@ -527,6 +536,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	}
 
 	LONG rLen;
+	pDlg->m_ulSuccessCount = pDlg->m_ulFailureCount = 0;
 	while (pDlg->m_bStart) {
 		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 			pEndPt->WaitForXfer(&pDlg->m_inOvLap[i], INFINITE);
@@ -537,9 +547,9 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
-				pDlg->L(_T("%d"), i);
+				pDlg->m_ulSuccessCount++;
 			}else{
-				pDlg->L(_T("FinishDataXfer failed at i=%d"), i);
+				pDlg->m_ulFailureCount++;
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
@@ -593,4 +603,14 @@ void CgStreamerDlg::L(const TCHAR* str, ...)
 	delete[](buffer);
 
 	m_log.SetTopIndex(m_log.GetCount() - 1);
+}
+
+void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (nIDEvent == COUNT_REFRESH_TIMER) {
+		UpdateData(FALSE);
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
 }
