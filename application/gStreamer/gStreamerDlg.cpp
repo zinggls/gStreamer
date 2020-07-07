@@ -526,6 +526,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			pDlg->L(_T("Queue up, BeginDataXfer failed at i=%d"), i);
 	}
 
+	LONG rLen;
 	while (pDlg->m_bStart) {
 		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 			pEndPt->WaitForXfer(&pDlg->m_inOvLap[i], INFINITE);
@@ -535,7 +536,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
-			LONG rLen;
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
 				pDlg->L(_T("%d"), i);
 			}else{
@@ -552,6 +552,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	// Deallocate memories
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
+		pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i]);
 		delete [] buffers[i];
 		delete [] isoPktInfos[i];
 	}
