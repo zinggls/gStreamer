@@ -85,6 +85,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_START_BUTTON, &CgStreamerDlg::OnBnClickedStartButton)
 	ON_CBN_SELCHANGE(IDC_QUEUE_COMBO, &CgStreamerDlg::OnCbnSelchangeQueueCombo)
 	ON_WM_TIMER()
+	ON_MESSAGE(WM_THREAD_TERMINATED, &CgStreamerDlg::OnThreadTerminated)
 END_MESSAGE_MAP()
 
 
@@ -572,7 +573,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	delete [] buffers;
 
 	pDlg->m_startButton.SetWindowTextW(_T("Start"));
-	pDlg->L(_T("Xfer thread terminated"));
+	pDlg->PostMessage(WM_THREAD_TERMINATED);
 	return 0;
 }
 
@@ -613,4 +614,10 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
+{
+	L(_T("Xfer thread terminated"));
+	return 0;
 }

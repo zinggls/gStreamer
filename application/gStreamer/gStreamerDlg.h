@@ -12,6 +12,8 @@ class CCyUSBEndPoint;
 #define MAX_QUEUE_SIZE			64
 #define MAX_LOG					1000
 
+#define	WM_THREAD_TERMINATED	(WM_USER+1)
+
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
 {
@@ -44,6 +46,7 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg LRESULT OnThreadTerminated(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();
