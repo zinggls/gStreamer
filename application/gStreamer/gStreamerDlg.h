@@ -78,4 +78,6 @@ public:
 	afx_msg void OnCbnSelchangeQueueCombo();
 	int m_nPPX;
 	void L(const TCHAR* str, ...);
+	BOOL m_bStart;
+	OVERLAPPED	m_inOvLap[MAX_QUEUE_SIZE];
 };

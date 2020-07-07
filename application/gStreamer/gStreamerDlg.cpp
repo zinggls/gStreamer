@@ -140,6 +140,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? L(errMsg):L(_T("streamer device ok"));
 
+	m_bStart = FALSE;
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -475,13 +476,22 @@ void CgStreamerDlg::OnBnClickedLogClearButton()
 void CgStreamerDlg::OnBnClickedStartButton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	m_pThread = AfxBeginThread(Xfer, this);
-	if (!m_pThread) {
-		L(_T("Failure in creating thread"));
-		return;
+	if (!m_bStart) {
+		m_bStart = TRUE;
+		m_pThread = AfxBeginThread(Xfer, this);
+		if (!m_pThread) {
+			m_bStart = FALSE;
+			L(_T("Failure in creating thread"));
+			return;
+		}
+		m_startButton.SetWindowTextW(_T("Stop"));
+		L(_T("Xfer thread started"));
 	}
-	m_startButton.SetWindowTextW(_T("Stop"));
-	L(_T("Xfer thread started"));
+	else {
+		L(_T("Xfer thread terminating..."));
+		m_bStart = FALSE;
+		for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
+	}
 }
 
 UINT CgStreamerDlg::Xfer(LPVOID pParam)
@@ -497,13 +507,12 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	PUCHAR			*buffers = new PUCHAR[pDlg->m_nQueueSize];
 	CCyIsoPktInfo	**isoPktInfos = new CCyIsoPktInfo*[pDlg->m_nQueueSize];
 	PUCHAR			*contexts = new PUCHAR[pDlg->m_nQueueSize];
-	OVERLAPPED		inOvLap[MAX_QUEUE_SIZE];
 
 	// Allocate all the buffers for the queues
 	for (int i = 0; i< pDlg->m_nQueueSize; i++) {
 		buffers[i] = new UCHAR[len];
 		isoPktInfos[i] = new CCyIsoPktInfo[pDlg->m_nPPX];
-		inOvLap[i].hEvent = CreateEvent(NULL, false, false, NULL);
+		pDlg->m_inOvLap[i].hEvent = CreateEvent(NULL, false, false, NULL);
 
 		memset(buffers[i], 0xEF, len);
 	}
@@ -512,26 +521,29 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
+		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus)
 			pDlg->L(_T("Queue up, BeginDataXfer failed at i=%d"), i);
 	}
 
-	while (true) {
+	while (pDlg->m_bStart) {
 		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-			pEndPt->WaitForXfer(&inOvLap[i], INFINITE);
+			pEndPt->WaitForXfer(&pDlg->m_inOvLap[i], INFINITE);
+
+			if (!pDlg->m_bStart)
+				break;
 
 			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
 			LONG rLen;
-			if (pEndPt->FinishDataXfer(buffers[i], rLen, &inOvLap[i], contexts[i])) {
+			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
 				pDlg->L(_T("%d"), i);
 			}else{
 				pDlg->L(_T("FinishDataXfer failed at i=%d"), i);
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
-			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
+			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
 				pDlg->L(_T("BeginDataXfer failed at i=%d"), i);
 			}
