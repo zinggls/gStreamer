@@ -515,16 +515,19 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	}
 
 	CCyUSBEndPoint *pEndPt = pDlg->m_pEndPt;
+
+	//Queue up before loop
+	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
+		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
+		if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
+			CString err;
+			err.Format(_T("Queue up, BeginDataXfer failed at i=%d"), i);
+			pDlg->m_log.AddString(err);
+		}
+	}
+
 	while (true) {
 		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
-			if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
-				CString err;
-				err.Format(_T("BeginDataXfer failed at i=%d"),i);
-				pDlg->m_log.AddString(err);
-				break;
-			}
-
 			pEndPt->WaitForXfer(&inOvLap[i], INFINITE);
 
 			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
@@ -538,7 +541,14 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				CString err;
 				err.Format(_T("FinishDataXfer failed at i=%d"), i);
 				pDlg->m_log.AddString(err);
-				break;
+			}
+
+			//새롭게 비워진 큐에 전송 요청을 보냄
+			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
+			if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
+				CString err;
+				err.Format(_T("BeginDataXfer failed at i=%d"), i);
+				pDlg->m_log.AddString(err);
 			}
 		}
 	}
