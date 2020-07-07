@@ -10,6 +10,7 @@ class CCyUSBEndPoint;
 
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
+#define MAX_LOG					1000
 
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
@@ -76,4 +77,5 @@ public:
 	int m_nQueueSize;
 	afx_msg void OnCbnSelchangeQueueCombo();
 	int m_nPPX;
+	void L(const TCHAR* str, ...);
 };

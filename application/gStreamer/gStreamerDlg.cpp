@@ -113,7 +113,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	m_log.AddString(_T("Initializing..."));
+	L(_T("Initializing..."));
 
 	int ppxValues[] = { 1,2,4,8,16,32,64,128,256,512 };
 	for (int i = 0; i < sizeof(ppxValues) / sizeof(int); i++) {
@@ -138,7 +138,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 	OnCbnSelchangeQueueCombo();
 
 	CString errMsg;
-	GetStreamerDevice(errMsg)==FALSE ? m_log.AddString(errMsg):m_log.AddString(_T("streamer device ok"));
+	GetStreamerDevice(errMsg)==FALSE ? L(errMsg):L(_T("streamer device ok"));
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -218,7 +218,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		m_pUsbDev->Open(i);
 		CString strDev;
 		strDev.Format(_T("(0x%04X - 0x%04X) %s"),m_pUsbDev->VendorID,m_pUsbDev->ProductID,CString(m_pUsbDev->FriendlyName).GetBuffer());
-		m_log.AddString(strDev);
+		L(strDev);
 		m_deviceCombo.AddString(strDev);
 	}
 	if (devCnt > 0) {
@@ -227,7 +227,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		m_deviceCombo.EnableWindow(TRUE);
 	}
 	else {
-		m_log.AddString(_T("No device found"));
+		L(_T("No device found"));
 		m_startButton.EnableWindow(FALSE);
 	}
 	return TRUE;
@@ -269,7 +269,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 
 					CString order;
 					order.Format(_T("[%d] "),j);
-					m_log.AddString(order+strEpt);
+					L(order+strEpt);
 				}
 			}
 		}
@@ -281,7 +281,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 		m_endpointCombo.EnableWindow(TRUE);
 	}
 	else {
-		m_log.AddString(_T("No EndPoint found"));
+		L(_T("No EndPoint found"));
 		m_startButton.EnableWindow(FALSE);
 	}
 	return TRUE;
@@ -354,14 +354,12 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 
 	CgStreamerDlg::CEndPointInfo info;
 	if (getEndPointInfo(selStr, info) == FALSE) {
-		m_log.AddString(_T("getEndPointInfo failed"));
+		L(_T("getEndPointInfo failed"));
 		return;
 	}
 
 	if (!m_pUsbDev->SetAltIntfc(info.m_alt)) {
-		CString str;
-		str.Format(_T("SetAltIntfc failed with alt:%d"),info.m_alt);
-		m_log.AddString(str);
+		L(_T("SetAltIntfc failed with alt:%d"), info.m_alt);
 		return;
 	}
 
@@ -386,13 +384,13 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (m_pEndPt == NULL) {
-		m_log.AddString(_T("EndPointer is NULL"));
+		L(_T("EndPointer is NULL"));
 		m_startButton.EnableWindow(FALSE);
 		return;
 	}
 
 	if (m_pEndPt->MaxPktSize == 0) {
-		m_log.AddString(_T("MaxPktSize is 0"));
+		L(_T("MaxPktSize is 0"));
 		m_startButton.EnableWindow(FALSE);
 		return;
 	}
@@ -405,22 +403,18 @@ void CgStreamerDlg::OnCbnSelchangePpxCombo()
 		m_ppxCombo.GetLBText(m_ppxComboIndex, strPpx);
 		m_nPPX = _ttoi(strPpx);
 
-		CString str;
-		str.Format(_T("ppx(%d) validated ok"), m_nPPX);
-		m_log.AddString(str);
+		L(_T("ppx(%d) validated ok"), m_nPPX);
 		m_startButton.EnableWindow(TRUE);
 	}
 	else {
-		m_log.AddString(strRtn);
+		L(strRtn);
 
 		CString strPpx;
 		m_ppxCombo.GetLBText(m_ppxCombo.GetCurSel(), strPpx);
 
 		m_ppxCombo.SetCurSel(m_ppxComboIndex);	//ppx검증이 실패하였으므로 선택된 콤보값을 이전값으로 되돌림
 
-		CString str;
-		str.Format(_T("Chosen ppx(%d) is invalid, restore ppx value"),_ttoi(strPpx));
-		m_log.AddString(str);
+		L(_T("Chosen ppx(%d) is invalid, restore ppx value"), _ttoi(strPpx));
 		m_startButton.EnableWindow(FALSE);
 	}
 }
@@ -483,11 +477,11 @@ void CgStreamerDlg::OnBnClickedStartButton()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_pThread = AfxBeginThread(Xfer, this);
 	if (!m_pThread) {
-		m_log.AddString(_T("Failure in creating thread"));
+		L(_T("Failure in creating thread"));
 		return;
 	}
 	m_startButton.SetWindowTextW(_T("Stop"));
-	m_log.AddString(_T("Xfer thread started"));
+	L(_T("Xfer thread started"));
 }
 
 UINT CgStreamerDlg::Xfer(LPVOID pParam)
@@ -519,11 +513,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
-		if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
-			CString err;
-			err.Format(_T("Queue up, BeginDataXfer failed at i=%d"), i);
-			pDlg->m_log.AddString(err);
-		}
+		if (pEndPt->NtStatus || pEndPt->UsbdStatus)
+			pDlg->L(_T("Queue up, BeginDataXfer failed at i=%d"), i);
 	}
 
 	while (true) {
@@ -534,21 +525,15 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 			LONG rLen;
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &inOvLap[i], contexts[i])) {
-				CString str;
-				str.Format(_T("%d"), i);
-				pDlg->m_log.AddString(str);
+				pDlg->L(_T("%d"), i);
 			}else{
-				CString err;
-				err.Format(_T("FinishDataXfer failed at i=%d"), i);
-				pDlg->m_log.AddString(err);
+				pDlg->L(_T("FinishDataXfer failed at i=%d"), i);
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
 			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &inOvLap[i]);
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
-				CString err;
-				err.Format(_T("BeginDataXfer failed at i=%d"), i);
-				pDlg->m_log.AddString(err);
+				pDlg->L(_T("BeginDataXfer failed at i=%d"), i);
 			}
 		}
 	}
@@ -564,7 +549,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	delete [] buffers;
 
 	pDlg->m_startButton.SetWindowTextW(_T("Start"));
-	pDlg->m_log.AddString(_T("Xfer thread terminated"));
+	pDlg->L(_T("Xfer thread terminated"));
 	return 0;
 }
 
@@ -574,4 +559,25 @@ void CgStreamerDlg::OnCbnSelchangeQueueCombo()
 	CString strQ;
 	m_queueCombo.GetLBText(m_queueCombo.GetCurSel(), strQ);
 	m_nQueueSize = _ttoi(strQ);
+}
+
+void CgStreamerDlg::L(const TCHAR* str, ...)
+{
+	if (m_log.GetCount() >= MAX_LOG) {
+		m_log.AddString(_T("Log >= MAX_LOG, Reset log"));
+		m_log.ResetContent();
+	}
+
+	va_list args;
+	va_start(args, str);
+
+	int len = _vsctprintf(str, args)+1;	//_vscprintf doesn't count terminating '\0'
+	TCHAR* buffer = new TCHAR[len];
+	_vstprintf(buffer,len, str, args);
+	va_end(args);
+
+	m_log.AddString(buffer);
+	delete[](buffer);
+
+	m_log.SetTopIndex(m_log.GetCount() - 1);
 }
