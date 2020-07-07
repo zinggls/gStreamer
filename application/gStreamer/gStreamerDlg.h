@@ -86,4 +86,5 @@ public:
 	ULONGLONG m_ulSuccessCount;
 	ULONGLONG m_ulFailureCount;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	ULONGLONG m_ulBeginDataXferErrCount;
 };

@@ -56,6 +56,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0), m_nPPX(0)
 	, m_ulSuccessCount(0)
 	, m_ulFailureCount(0)
+	, m_ulBeginDataXferErrCount(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -71,6 +72,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_START_BUTTON, m_startButton);
 	DDX_Text(pDX, IDC_SUCCESS_COUNT_EDIT, m_ulSuccessCount);
 	DDX_Text(pDX, IDC_FAILURE_COUNT_EDIT, m_ulFailureCount);
+	DDX_Text(pDX, IDC_BEGINDATAXFER_ERROR_COUNT_EDIT, m_ulBeginDataXferErrCount);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -528,16 +530,15 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	}
 
 	CCyUSBEndPoint *pEndPt = pDlg->m_pEndPt;
+	pDlg->m_ulSuccessCount = pDlg->m_ulFailureCount = pDlg->m_ulBeginDataXferErrCount = 0;
 
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
-		if (pEndPt->NtStatus || pEndPt->UsbdStatus)
-			pDlg->L(_T("Queue up, BeginDataXfer failed at i=%d"), i);
+		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 	}
 
 	LONG rLen;
-	pDlg->m_ulSuccessCount = pDlg->m_ulFailureCount = 0;
 	while (pDlg->m_bStart) {
 		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 			pEndPt->WaitForXfer(&pDlg->m_inOvLap[i], INFINITE);
@@ -552,9 +553,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
 			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
-			if (pEndPt->NtStatus || pEndPt->UsbdStatus) {
-				pDlg->L(_T("BeginDataXfer failed at i=%d"), i);
-			}
+			if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 
 			if (!pDlg->m_bStart && i == (pDlg->m_nQueueSize - 1))	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
 				break;
