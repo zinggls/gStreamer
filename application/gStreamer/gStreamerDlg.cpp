@@ -557,10 +557,15 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
-				pDlg->m_ulSuccessCount++;
-				pDlg->m_ulBytesTransferred += rLen;
+				if (pDlg->m_bStart) { //Stop버튼이 눌러진 뒤에는 카운트 하지 않기
+					pDlg->m_ulSuccessCount++;
+					pDlg->m_ulBytesTransferred += rLen;
+				}
 			}else{
-				pDlg->m_ulFailureCount++;
+				if (pDlg->m_bStart) { //Stop버튼이 눌러진 뒤에는 카운트 하지 않기
+					pDlg->m_ulFailureCount++;
+					TRACE("Failcount=%u\n", pDlg->m_ulFailureCount);
+				}
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
