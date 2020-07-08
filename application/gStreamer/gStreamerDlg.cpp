@@ -78,6 +78,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_KBPS_PROGRESS1, m_transferRate);
 	DDX_Text(pDX, IDC_KBPS_STATIC, m_kbps);
 	DDX_Text(pDX, IDC_FILE_SELECT_STATIC, m_fileSelect);
+	DDX_Control(pDX, IDC_FILE_SELECT_BUTTON, m_fileSelectBtn);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -300,6 +301,8 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 	}
 	else {
 		m_fileSelect.Empty();
+		m_fileSelectBtn.ShowWindow(SW_HIDE);
+		UpdateData(FALSE);
 		L(_T("No EndPoint found"));
 		m_startButton.EnableWindow(FALSE);
 	}
@@ -385,8 +388,10 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
 	if (m_pEndPt->Attributes == 2) { //BULK
 		(m_pEndPt->bIn)? m_fileSelect = _T("File to save:"): m_fileSelect = _T("File to read:");
+		m_fileSelectBtn.ShowWindow(SW_SHOW);
 	}else{
 		m_fileSelect.Empty();
+		m_fileSelectBtn.ShowWindow(SW_HIDE);
 	}
 	UpdateData(FALSE);
 	OnCbnSelchangePpxCombo();

@@ -97,4 +97,5 @@ public:
 	void showStats();
 	double m_curKBps;
 	CString m_fileSelect;
+	CButton m_fileSelectBtn;
 };
