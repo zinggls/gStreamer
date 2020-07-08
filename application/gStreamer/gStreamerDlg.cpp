@@ -154,6 +154,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 	GetStreamerDevice(errMsg)==FALSE ? L(errMsg):L(_T("streamer device ok"));
 
 	m_bStart = FALSE;
+	m_transferRate.SetRange(0, (short)MAX_KBPS);
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -621,6 +622,7 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	if (nIDEvent == COUNT_REFRESH_TIMER) {
+		m_transferRate.SetPos((short)(m_curKBps/1000));	//KBps에서 MBps단위로 변환
 		UpdateData(FALSE);
 	}
 
@@ -649,5 +651,6 @@ void CgStreamerDlg::showStats()
 	double elapsed = ((double)(curTime - m_startTime)) / CLOCKS_PER_SEC;
 	//TRACE("수행 시간 : %f\n", elapsed);
 
-	m_kbps.Format(_T("%.0f KBps"), ((double)m_ulBytesTransferred / elapsed)/1024.);
+	m_curKBps = ((double)m_ulBytesTransferred / elapsed) / 1024.;
+	m_kbps.Format(_T("%.0f KBps"),m_curKBps);
 }

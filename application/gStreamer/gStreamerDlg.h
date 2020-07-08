@@ -12,6 +12,7 @@ class CCyUSBEndPoint;
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
 #define MAX_LOG					1000
+#define MAX_KBPS				625				//625MBps, FX3는 Max 5G bps이므로 바이트단위로는 5/8 = 0.625 GBps = 625 MBps
 
 #define	WM_THREAD_TERMINATED	(WM_USER+1)
 
@@ -94,4 +95,5 @@ public:
 	ULONGLONG m_ulBytesTransferred;
 	clock_t m_startTime;
 	void showStats();
+	double m_curKBps;
 };
