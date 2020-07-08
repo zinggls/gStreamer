@@ -497,10 +497,18 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		}
 		m_startButton.SetWindowTextW(_T("Stop"));
 		SetTimer(COUNT_REFRESH_TIMER, COUNT_REFRESH_TIMER_INTERVAL, NULL);
+		GetDlgItem(IDC_DEVICE_COMBO)->EnableWindow(FALSE);
+		GetDlgItem(IDC_ENDPOINT_COMBO)->EnableWindow(FALSE);
+		GetDlgItem(IDC_PPX_COMBO)->EnableWindow(FALSE);
+		GetDlgItem(IDC_QUEUE_COMBO)->EnableWindow(FALSE);
 		L(_T("Xfer thread started"));
 	}
 	else {
 		terminateThread();
+		GetDlgItem(IDC_DEVICE_COMBO)->EnableWindow(TRUE);
+		GetDlgItem(IDC_ENDPOINT_COMBO)->EnableWindow(TRUE);
+		GetDlgItem(IDC_PPX_COMBO)->EnableWindow(TRUE);
+		GetDlgItem(IDC_QUEUE_COMBO)->EnableWindow(TRUE);
 	}
 }
 
