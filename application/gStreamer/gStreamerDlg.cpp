@@ -58,6 +58,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_ulFailureCount(0)
 	, m_ulBeginDataXferErrCount(0)
 	, m_kbps(_T(""))
+	, m_fileSelect(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -76,6 +77,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_BEGINDATAXFER_ERROR_COUNT_EDIT, m_ulBeginDataXferErrCount);
 	DDX_Control(pDX, IDC_KBPS_PROGRESS1, m_transferRate);
 	DDX_Text(pDX, IDC_KBPS_STATIC, m_kbps);
+	DDX_Text(pDX, IDC_FILE_SELECT_STATIC, m_fileSelect);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -297,6 +299,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 		m_endpointCombo.EnableWindow(TRUE);
 	}
 	else {
+		m_fileSelect.Empty();
 		L(_T("No EndPoint found"));
 		m_startButton.EnableWindow(FALSE);
 	}
@@ -380,6 +383,12 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 	}
 
 	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
+	if (m_pEndPt->Attributes == 2) { //BULK
+		(m_pEndPt->bIn)? m_fileSelect = _T("File to save:"): m_fileSelect = _T("File to read:");
+	}else{
+		m_fileSelect.Empty();
+	}
+	UpdateData(FALSE);
 	OnCbnSelchangePpxCombo();
 }
 
