@@ -539,7 +539,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	}
 
 	CCyUSBEndPoint *pEndPt = pDlg->m_pEndPt;
-	pDlg->m_ulSuccessCount = pDlg->m_ulFailureCount = pDlg->m_ulBeginDataXferErrCount = 0;
+	pDlg->m_ulSuccessCount = pDlg->m_ulFailureCount = pDlg->m_ulBeginDataXferErrCount = pDlg->m_ulBytesTransferred = 0;
+	pDlg->m_startTime = clock();
 
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
@@ -556,6 +557,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
 				pDlg->m_ulSuccessCount++;
+				pDlg->m_ulBytesTransferred += rLen;
 			}else{
 				pDlg->m_ulFailureCount++;
 			}
@@ -564,8 +566,10 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 
-			if (!pDlg->m_bStart && i == (pDlg->m_nQueueSize - 1))	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
-				break;
+			if (i == (pDlg->m_nQueueSize - 1)) {	//큐의 맨마지막 요소
+				pDlg->showStats();
+				if (!pDlg->m_bStart) break;	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
+			}
 		}
 	}
 
@@ -637,4 +641,13 @@ void CgStreamerDlg::terminateThread()
 	for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
 	WaitForSingleObject(m_pThread->m_hThread, INFINITE);
 	KillTimer(COUNT_REFRESH_TIMER);
+}
+
+void CgStreamerDlg::showStats()
+{
+	clock_t curTime = clock();
+	double elapsed = ((double)(curTime - m_startTime)) / CLOCKS_PER_SEC;
+	//TRACE("수행 시간 : %f\n", elapsed);
+
+	m_kbps.Format(_T("%.0f KBps"), ((double)m_ulBytesTransferred / elapsed)/1024.);
 }

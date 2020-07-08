@@ -91,4 +91,7 @@ public:
 	void terminateThread();
 	CProgressCtrl m_transferRate;
 	CString m_kbps;
+	ULONGLONG m_ulBytesTransferred;
+	clock_t m_startTime;
+	void showStats();
 };
