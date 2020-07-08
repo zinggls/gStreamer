@@ -210,7 +210,7 @@ void CgStreamerDlg::OnDestroy()
 	CDialogEx::OnDestroy();
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-	OnBnClickedStartButton();
+	terminateThread();
 	delete m_pUsbDev;
 }
 
@@ -500,11 +500,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		L(_T("Xfer thread started"));
 	}
 	else {
-		L(_T("Xfer thread terminating..."));
-		m_bStart = FALSE;
-		for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
-		WaitForSingleObject(m_pThread->m_hThread, INFINITE);
-		KillTimer(COUNT_REFRESH_TIMER);
+		terminateThread();
 	}
 }
 
@@ -621,4 +617,13 @@ LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 	m_startButton.SetWindowTextW(_T("Start"));
 	L(_T("Xfer thread terminated"));
 	return 0;
+}
+
+void CgStreamerDlg::terminateThread()
+{
+	L(_T("Xfer thread terminating..."));
+	m_bStart = FALSE;
+	for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
+	WaitForSingleObject(m_pThread->m_hThread, INFINITE);
+	KillTimer(COUNT_REFRESH_TIMER);
 }
