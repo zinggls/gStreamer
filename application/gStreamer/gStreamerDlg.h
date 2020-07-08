@@ -98,4 +98,7 @@ public:
 	double m_curKBps;
 	CString m_fileSelect;
 	CButton m_fileSelectBtn;
+	afx_msg void OnBnClickedFileSelectButton();
+	CString m_strReadFileName;
+	CString m_strSaveFileName;
 };

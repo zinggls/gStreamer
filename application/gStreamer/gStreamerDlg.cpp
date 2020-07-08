@@ -94,6 +94,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_QUEUE_COMBO, &CgStreamerDlg::OnCbnSelchangeQueueCombo)
 	ON_WM_TIMER()
 	ON_MESSAGE(WM_THREAD_TERMINATED, &CgStreamerDlg::OnThreadTerminated)
+	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
 
@@ -387,7 +388,8 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 
 	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
 	if (m_pEndPt->Attributes == 2) { //BULK
-		(m_pEndPt->bIn)? m_fileSelect = _T("File to save:"): m_fileSelect = _T("File to read:");
+		(m_pEndPt->bIn)? m_fileSelect = _T("File save to:"): m_fileSelect = _T("File read from:");
+		m_strReadFileName = m_strSaveFileName = _T("");
 		m_fileSelectBtn.ShowWindow(SW_SHOW);
 	}else{
 		m_fileSelect.Empty();
@@ -672,4 +674,28 @@ void CgStreamerDlg::showStats()
 
 	m_curKBps = ((double)m_ulBytesTransferred / elapsed) / 1024.;
 	m_kbps.Format(_T("%.0f KBps"),m_curKBps);
+}
+
+void CgStreamerDlg::OnBnClickedFileSelectButton()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	ASSERT(m_pEndPt);
+	ASSERT(m_pEndPt->Attributes==2);	//편의상 현시점에서는 BULK만 지원하도록 구현, isochronous도 지원해야 함
+
+	TCHAR szFilter[] = _T("All Files(*.*)|*.*||");
+	if (m_pEndPt->bIn) {
+		CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
+		if (IDOK == dlg.DoModal()) {
+			m_strReadFileName = dlg.GetPathName();
+			L(_T("File name to save:%s"),m_strReadFileName);
+		}
+	}
+	else {
+		CFileDialog dlg(FALSE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
+		if (IDOK == dlg.DoModal()) {
+			m_strSaveFileName = dlg.GetPathName();
+			L(_T("File name to read:%s"), m_strSaveFileName);
+		}
+	}
+	UpdateData(FALSE);
 }
