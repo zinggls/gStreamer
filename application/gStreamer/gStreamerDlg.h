@@ -4,6 +4,7 @@
 
 #pragma once
 #include "afxwin.h"
+#include "afxcmn.h"
 
 class CCyUSBDevice;
 class CCyUSBEndPoint;
@@ -88,4 +89,6 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	ULONGLONG m_ulBeginDataXferErrCount;
 	void terminateThread();
+	CProgressCtrl m_transferRate;
+	CString m_kbps;
 };

@@ -57,6 +57,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_ulSuccessCount(0)
 	, m_ulFailureCount(0)
 	, m_ulBeginDataXferErrCount(0)
+	, m_kbps(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -73,6 +74,8 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_SUCCESS_COUNT_EDIT, m_ulSuccessCount);
 	DDX_Text(pDX, IDC_FAILURE_COUNT_EDIT, m_ulFailureCount);
 	DDX_Text(pDX, IDC_BEGINDATAXFER_ERROR_COUNT_EDIT, m_ulBeginDataXferErrCount);
+	DDX_Control(pDX, IDC_KBPS_PROGRESS1, m_transferRate);
+	DDX_Text(pDX, IDC_KBPS_STATIC, m_kbps);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
