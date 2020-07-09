@@ -161,6 +161,9 @@ BOOL CgStreamerDlg::OnInitDialog()
 
 	m_bStart = FALSE;
 	m_transferRate.SetRange(0, (short)MAX_KBPS);
+	GetDlgItem(IDC_SUCCESS_COUNT_EDIT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_FAILURE_COUNT_EDIT)->EnableWindow(FALSE);
+	GetDlgItem(IDC_BEGINDATAXFER_ERROR_COUNT_EDIT)->EnableWindow(FALSE);
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
