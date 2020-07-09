@@ -530,6 +530,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		GetDlgItem(IDC_PPX_COMBO)->EnableWindow(FALSE);
 		GetDlgItem(IDC_QUEUE_COMBO)->EnableWindow(FALSE);
 		GetDlgItem(IDC_FILE_SELECT_BUTTON)->EnableWindow(FALSE);
+		GetDlgItem(IDC_FILENAME_EDIT)->EnableWindow(FALSE);
 		L(_T("Xfer thread started"));
 	}
 	else {
@@ -539,6 +540,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		GetDlgItem(IDC_PPX_COMBO)->EnableWindow(TRUE);
 		GetDlgItem(IDC_QUEUE_COMBO)->EnableWindow(TRUE);
 		GetDlgItem(IDC_FILE_SELECT_BUTTON)->EnableWindow(TRUE);
+		GetDlgItem(IDC_FILENAME_EDIT)->EnableWindow(TRUE);
 	}
 }
 
