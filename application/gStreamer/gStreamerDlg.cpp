@@ -588,10 +588,16 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	}
 
 	//Queue up before loop
+	BOOL bEofFound = FALSE;
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-		if (pFile && !pEndPt->bIn) read(pFile, buffers[i], len, TRUE, TRUE, pDlg->m_hWnd);
+		if (pFile && !pEndPt->bIn) if(!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
+	}
+
+	if (bEofFound) {
+		TRACE("EOF Found while initial queueing. File is too short compared to given queue size(%d)\n",pDlg->m_nQueueSize);
+		goto cleanup;
 	}
 
 	LONG rLen;
@@ -614,9 +620,15 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
-			if (pFile && !pEndPt->bIn) read(pFile, buffers[i], len, TRUE, TRUE, pDlg->m_hWnd);
+			if (pFile && !pEndPt->bIn) if (!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
 			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
+
+			if (bEofFound) {
+				pDlg->m_bStart = FALSE;
+				pDlg->showStats();
+				break;	//EOF가 발견되면 루프 탈출
+			}
 
 			if (i == (pDlg->m_nQueueSize - 1)) {	//큐의 맨마지막 요소
 				pDlg->showStats();
@@ -624,6 +636,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 		}
 	}
+
+cleanup:
 	delete pFile;
 
 	// Deallocate memories
@@ -741,13 +755,17 @@ LRESULT CgStreamerDlg::OnEndOfFile(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-UINT CgStreamerDlg::read(CFile *pFile, UCHAR *buffer,UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd)
+BOOL CgStreamerDlg::fullRead(CFile *pFile, UCHAR *buffer,UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd)
 {
 	memset(buffer, 0, nCount);	//버퍼는 nCount까지 모두 0으로 초기화한다. nCount까지 못읽는 경우 나머지 공간은 0으로 채워진다
 	UINT read = pFile->Read(buffer, nCount);	//BULK OUT인 경우 파일로 부터 읽는다
 	if (read < nCount) {
-		if (bSeekToBegin) pFile->SeekToBegin();
 		if (bPostEofMsg) ::PostMessage(hWnd, WM_END_OF_FILE,0,0);
+		if (bSeekToBegin) {
+			pFile->SeekToBegin();
+			return TRUE;
+		}
+		return FALSE;
 	}
-	return read;
+	return TRUE;
 }

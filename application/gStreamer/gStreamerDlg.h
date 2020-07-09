@@ -102,7 +102,7 @@ public:
 	CButton m_fileSelectBtn;
 	afx_msg void OnBnClickedFileSelectButton();
 	CString m_strFileName;
-	static UINT read(CFile *pFile, UCHAR *buffer, UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd);
+	static BOOL fullRead(CFile *pFile, UCHAR *buffer, UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd);
 };
 
 typedef struct {
