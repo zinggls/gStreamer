@@ -99,6 +99,5 @@ public:
 	CString m_fileSelect;
 	CButton m_fileSelectBtn;
 	afx_msg void OnBnClickedFileSelectButton();
-	CString m_strReadFileName;
-	CString m_strSaveFileName;
+	CString m_strFileName;
 };

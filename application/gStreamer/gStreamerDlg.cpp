@@ -59,6 +59,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_ulBeginDataXferErrCount(0)
 	, m_kbps(_T(""))
 	, m_fileSelect(_T(""))
+	, m_strFileName(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -79,6 +80,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_KBPS_STATIC, m_kbps);
 	DDX_Text(pDX, IDC_FILE_SELECT_STATIC, m_fileSelect);
 	DDX_Control(pDX, IDC_FILE_SELECT_BUTTON, m_fileSelectBtn);
+	DDX_Text(pDX, IDC_FILENAME_EDIT, m_strFileName);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -303,6 +305,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 	else {
 		m_fileSelect.Empty();
 		m_fileSelectBtn.ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_HIDE);
 		UpdateData(FALSE);
 		L(_T("No EndPoint found"));
 		m_startButton.EnableWindow(FALSE);
@@ -389,11 +392,13 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
 	if (m_pEndPt->Attributes == 2) { //BULK
 		(m_pEndPt->bIn)? m_fileSelect = _T("File save to:"): m_fileSelect = _T("File read from:");
-		m_strReadFileName = m_strSaveFileName = _T("");
+		m_strFileName = _T("");
 		m_fileSelectBtn.ShowWindow(SW_SHOW);
+		GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_SHOW);
 	}else{
 		m_fileSelect.Empty();
 		m_fileSelectBtn.ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_HIDE);
 	}
 	UpdateData(FALSE);
 	OnCbnSelchangePpxCombo();
@@ -688,15 +693,15 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 	if (m_pEndPt->bIn) {
 		CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
 		if (IDOK == dlg.DoModal()) {
-			m_strReadFileName = dlg.GetPathName();
-			L(_T("File save to:%s"),m_strReadFileName);
+			m_strFileName = dlg.GetPathName();
+			L(_T("File save to:%s"), m_strFileName);
 		}
 	}
 	else {
 		CFileDialog dlg(FALSE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
 		if (IDOK == dlg.DoModal()) {
-			m_strSaveFileName = dlg.GetPathName();
-			L(_T("File read from:%s"), m_strSaveFileName);
+			m_strFileName = dlg.GetPathName();
+			L(_T("File read from:%s"), m_strFileName);
 		}
 	}
 	UpdateData(FALSE);
