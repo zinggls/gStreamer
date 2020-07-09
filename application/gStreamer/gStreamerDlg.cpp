@@ -697,7 +697,7 @@ void CgStreamerDlg::terminateThread()
 	L(_T("Xfer thread terminating..."));
 	m_bStart = FALSE;
 	for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
-	WaitForSingleObject(m_pThread->m_hThread, INFINITE);
+	if (m_pThread) WaitForSingleObject(m_pThread->m_hThread, INFINITE);
 	KillTimer(COUNT_REFRESH_TIMER);
 }
 
