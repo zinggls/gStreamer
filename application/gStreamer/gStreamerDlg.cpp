@@ -13,7 +13,7 @@
 #endif
 
 #define COUNT_REFRESH_TIMER				1
-#define COUNT_REFRESH_TIMER_INTERVAL	100
+#define COUNT_REFRESH_TIMER_INTERVAL	10
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
