@@ -581,13 +581,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-		if (pFile && !pEndPt->bIn) {
-			UINT read = pFile->Read(buffers[i], len);	//BULK OUT인 경우 파일로 부터 읽는다
-			if (read < len) {
-				pFile->SeekToBegin();
-				pDlg->PostMessage(WM_END_OF_FILE);
-			}
-		}
+		if (pFile && !pEndPt->bIn) read(pFile, buffers[i], len, TRUE, TRUE, pDlg->m_hWnd);
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 	}
@@ -612,13 +606,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
-			if (pFile && !pEndPt->bIn) {
-				UINT read = pFile->Read(buffers[i], len);	//BULK OUT인 경우 파일로 부터 읽는다
-				if (read < len) {
-					pFile->SeekToBegin();
-					pDlg->PostMessage(WM_END_OF_FILE);
-				}
-			}
+			if (pFile && !pEndPt->bIn) read(pFile, buffers[i], len, TRUE, TRUE, pDlg->m_hWnd);
 			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 
@@ -739,4 +727,14 @@ LRESULT CgStreamerDlg::OnEndOfFile(WPARAM wParam, LPARAM lParam)
 {
 	L(_T("End of file reached"));
 	return 0;
+}
+
+UINT CgStreamerDlg::read(CFile *pFile, UCHAR *buffer,UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd)
+{
+	UINT read = pFile->Read(buffer, nCount);	//BULK OUT인 경우 파일로 부터 읽는다
+	if (read < nCount) {
+		if (bSeekToBegin) pFile->SeekToBegin();
+		if (bPostEofMsg) ::PostMessage(hWnd, WM_END_OF_FILE,0,0);
+	}
+	return read;
 }
