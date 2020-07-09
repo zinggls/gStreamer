@@ -578,7 +578,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	CFile *pFile = NULL;
 	FILEINFO fileInfo;
-	assert(pEndPt->Attributes == 2);	//BULK만을 고려한다
+	ASSERT(pEndPt->Attributes == 2);	//BULK만을 고려한다
 	if (pEndPt->bIn == FALSE) {	//BULK OUT
 		if (!pDlg->m_strFileName.IsEmpty()) {
 			pFile = new CFile(pDlg->m_strFileName, CFile::modeRead | CFile::typeBinary);
@@ -609,7 +609,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 		for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 			pEndPt->WaitForXfer(&pDlg->m_inOvLap[i], INFINITE);
 
-			assert(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
+			ASSERT(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
 				if (pDlg->m_bStart) { //Stop버튼이 눌러진 뒤에는 카운트 하지 않기
