@@ -573,15 +573,16 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	pDlg->m_startTime = clock();
 
 	CFile *pFile = NULL;
-	CString fileName;
-	DWORD fileSize = 0;
+	FILEINFO fileInfo;
 	assert(pEndPt->Attributes == 2);	//BULK만을 고려한다
 	if (pEndPt->bIn == FALSE) {	//BULK OUT
 		if (!pDlg->m_strFileName.IsEmpty()) {
 			pFile = new CFile(pDlg->m_strFileName, CFile::modeRead | CFile::typeBinary);
-			fileName = PathFindFileName(pDlg->m_strFileName.GetBuffer());
-			fileSize = GetFileSize(pFile->m_hFile, NULL);
-			TRACE("fileName=%S, size=%dbyte\n", fileName.GetBuffer(), fileSize);
+			CString fileName = PathFindFileName(pDlg->m_strFileName.GetBuffer());
+			memset(fileInfo.name_, 0, sizeof(fileInfo.name_));
+			memcpy(fileInfo.name_, fileName.GetBuffer(),fileName.GetLength()*sizeof(TCHAR));
+			fileInfo.size_ = GetFileSize(pFile->m_hFile, NULL);
+			TRACE("fileName=%S, size=%dbyte\n", fileInfo.name_, fileInfo.size_);
 		}
 	}
 

@@ -104,3 +104,8 @@ public:
 	CString m_strFileName;
 	static UINT read(CFile *pFile, UCHAR *buffer, UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd);
 };
+
+typedef struct {
+	DWORD size_;
+	TCHAR name_[512];
+} FILEINFO;
