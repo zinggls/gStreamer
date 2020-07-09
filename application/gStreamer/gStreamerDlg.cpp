@@ -57,7 +57,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_ulSuccessCount(0)
 	, m_ulFailureCount(0)
 	, m_ulBeginDataXferErrCount(0)
-	, m_kbps(_T(""))
+	, m_KBps(_T(""))
 	, m_fileSelect(_T(""))
 	, m_strFileName(_T(""))
 {
@@ -77,7 +77,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FAILURE_COUNT_EDIT, m_ulFailureCount);
 	DDX_Text(pDX, IDC_BEGINDATAXFER_ERROR_COUNT_EDIT, m_ulBeginDataXferErrCount);
 	DDX_Control(pDX, IDC_KBPS_PROGRESS1, m_transferRate);
-	DDX_Text(pDX, IDC_KBPS_STATIC, m_kbps);
+	DDX_Text(pDX, IDC_KBPS_STATIC, m_KBps);
 	DDX_Text(pDX, IDC_FILE_SELECT_STATIC, m_fileSelect);
 	DDX_Control(pDX, IDC_FILE_SELECT_BUTTON, m_fileSelectBtn);
 	DDX_Text(pDX, IDC_FILENAME_EDIT, m_strFileName);
@@ -724,7 +724,7 @@ void CgStreamerDlg::showStats()
 	//TRACE("수행 시간 : %f\n", elapsed);
 
 	m_curKBps = ((double)m_ulBytesTransferred / elapsed) / 1024.;
-	m_kbps.Format(_T("%.0f KBps"),m_curKBps);
+	m_KBps.Format(_T("%.0f KBps"),m_curKBps);
 }
 
 void CgStreamerDlg::OnBnClickedFileSelectButton()

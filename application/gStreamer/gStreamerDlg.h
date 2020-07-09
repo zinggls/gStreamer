@@ -93,7 +93,7 @@ public:
 	ULONGLONG m_ulBeginDataXferErrCount;
 	void terminateThread();
 	CProgressCtrl m_transferRate;
-	CString m_kbps;
+	CString m_KBps;
 	ULONGLONG m_ulBytesTransferred;
 	clock_t m_startTime;
 	void showStats();
