@@ -580,9 +580,10 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			pFile = new CFile(pDlg->m_strFileName, CFile::modeRead | CFile::typeBinary);
 			CString fileName = PathFindFileName(pDlg->m_strFileName.GetBuffer());
 			memset(fileInfo.name_, 0, sizeof(fileInfo.name_));
-			memcpy(fileInfo.name_, fileName.GetBuffer(),fileName.GetLength()*sizeof(TCHAR));
+			fileInfo.nameSize_ = fileName.GetLength() * sizeof(TCHAR);
+			memcpy(fileInfo.name_, fileName.GetBuffer(),fileInfo.nameSize_);
 			fileInfo.size_ = GetFileSize(pFile->m_hFile, NULL);
-			TRACE("fileName=%S, size=%dbyte\n", fileInfo.name_, fileInfo.size_);
+			TRACE("fileName=%S(%d), size=%dbyte\n", fileInfo.name_,fileInfo.nameSize_,fileInfo.size_);
 		}
 	}
 
