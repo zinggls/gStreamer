@@ -96,6 +96,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_QUEUE_COMBO, &CgStreamerDlg::OnCbnSelchangeQueueCombo)
 	ON_WM_TIMER()
 	ON_MESSAGE(WM_THREAD_TERMINATED, &CgStreamerDlg::OnThreadTerminated)
+	ON_MESSAGE(WM_END_OF_FILE, &CgStreamerDlg::OnEndOfFile)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
@@ -571,8 +572,22 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	pDlg->m_ulSuccessCount = pDlg->m_ulFailureCount = pDlg->m_ulBeginDataXferErrCount = pDlg->m_ulBytesTransferred = 0;
 	pDlg->m_startTime = clock();
 
+	CFile *pFile = NULL;
+	assert(pEndPt->Attributes == 2);	//BULK만을 고려한다
+	if (pEndPt->bIn == FALSE) {	//BULK OUT
+		if (!pDlg->m_strFileName.IsEmpty())
+			pFile = new CFile(pDlg->m_strFileName, CFile::modeRead | CFile::typeBinary);
+	}
+
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
+		if (pFile && !pEndPt->bIn) {
+			UINT read = pFile->Read(buffers[i], len);	//BULK OUT인 경우 파일로 부터 읽는다
+			if (read < len) {
+				pFile->SeekToBegin();
+				pDlg->PostMessage(WM_END_OF_FILE);
+			}
+		}
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 	}
@@ -597,6 +612,13 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
+			if (pFile && !pEndPt->bIn) {
+				UINT read = pFile->Read(buffers[i], len);	//BULK OUT인 경우 파일로 부터 읽는다
+				if (read < len) {
+					pFile->SeekToBegin();
+					pDlg->PostMessage(WM_END_OF_FILE);
+				}
+			}
 			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 
@@ -606,6 +628,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 		}
 	}
+	delete pFile;
 
 	// Deallocate memories
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
@@ -710,4 +733,10 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 		}
 	}
 	UpdateData(FALSE);
+}
+
+LRESULT CgStreamerDlg::OnEndOfFile(WPARAM wParam, LPARAM lParam)
+{
+	L(_T("End of file reached"));
+	return 0;
 }

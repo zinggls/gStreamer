@@ -15,6 +15,7 @@ class CCyUSBEndPoint;
 #define MAX_KBPS				625				//625MBps, FX3는 Max 5G bps이므로 바이트단위로는 5/8 = 0.625 GBps = 625 MBps
 
 #define	WM_THREAD_TERMINATED	(WM_USER+1)
+#define WM_END_OF_FILE			(WM_USER+2)
 
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
@@ -49,6 +50,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg LRESULT OnThreadTerminated(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnEndOfFile(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();
