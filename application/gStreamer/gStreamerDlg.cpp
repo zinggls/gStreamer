@@ -570,6 +570,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	CCyUSBEndPoint *pEndPt = pDlg->m_pEndPt;
 	pDlg->m_ulSuccessCount = pDlg->m_ulFailureCount = pDlg->m_ulBeginDataXferErrCount = pDlg->m_ulBytesTransferred = 0;
+	pDlg->m_curKBps = 0.0;
 	pDlg->m_startTime = clock();
 
 	CFile *pFile = NULL;
