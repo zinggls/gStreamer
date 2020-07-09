@@ -510,6 +510,9 @@ void CgStreamerDlg::OnBnClickedLogClearButton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	m_log.ResetContent();
+	m_transferRate.SetPos(0);
+	m_KBps.Empty();
+	UpdateData(FALSE);
 }
 
 
@@ -698,6 +701,7 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 
 LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 {
+	m_curKBps = 0.0;
 	m_startButton.SetWindowTextW(_T("Start"));
 	GetDlgItem(IDC_DEVICE_COMBO)->EnableWindow(TRUE);
 	GetDlgItem(IDC_ENDPOINT_COMBO)->EnableWindow(TRUE);
@@ -705,6 +709,7 @@ LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 	GetDlgItem(IDC_QUEUE_COMBO)->EnableWindow(TRUE);
 	GetDlgItem(IDC_FILE_SELECT_BUTTON)->EnableWindow(TRUE);
 	GetDlgItem(IDC_FILENAME_EDIT)->EnableWindow(TRUE);
+	KillTimer(COUNT_REFRESH_TIMER);
 	L(_T("Xfer thread terminated"));
 	return 0;
 }
@@ -715,7 +720,6 @@ void CgStreamerDlg::terminateThread()
 	m_bStart = FALSE;
 	for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
 	if (m_pThread) WaitForSingleObject(m_pThread->m_hThread, INFINITE);
-	KillTimer(COUNT_REFRESH_TIMER);
 }
 
 void CgStreamerDlg::showStats()
