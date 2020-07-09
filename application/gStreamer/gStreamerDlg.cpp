@@ -689,14 +689,14 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 		CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
 		if (IDOK == dlg.DoModal()) {
 			m_strReadFileName = dlg.GetPathName();
-			L(_T("File name to save:%s"),m_strReadFileName);
+			L(_T("File save to:%s"),m_strReadFileName);
 		}
 	}
 	else {
 		CFileDialog dlg(FALSE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
 		if (IDOK == dlg.DoModal()) {
 			m_strSaveFileName = dlg.GetPathName();
-			L(_T("File name to read:%s"), m_strSaveFileName);
+			L(_T("File read from:%s"), m_strSaveFileName);
 		}
 	}
 	UpdateData(FALSE);
