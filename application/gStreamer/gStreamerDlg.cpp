@@ -711,6 +711,8 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 		if (IDOK == dlg.DoModal()) {
 			m_strFileName = dlg.GetPathName();
 			L(_T("File save to:%s"), m_strFileName);
+		}else{
+			m_strFileName.Empty();
 		}
 	}
 	else {
@@ -718,6 +720,8 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 		if (IDOK == dlg.DoModal()) {
 			m_strFileName = dlg.GetPathName();
 			L(_T("File read from:%s"), m_strFileName);
+		}else{
+			m_strFileName.Empty();
 		}
 	}
 	UpdateData(FALSE);
