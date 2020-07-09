@@ -698,6 +698,12 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 {
 	m_startButton.SetWindowTextW(_T("Start"));
+	GetDlgItem(IDC_DEVICE_COMBO)->EnableWindow(TRUE);
+	GetDlgItem(IDC_ENDPOINT_COMBO)->EnableWindow(TRUE);
+	GetDlgItem(IDC_PPX_COMBO)->EnableWindow(TRUE);
+	GetDlgItem(IDC_QUEUE_COMBO)->EnableWindow(TRUE);
+	GetDlgItem(IDC_FILE_SELECT_BUTTON)->EnableWindow(TRUE);
+	GetDlgItem(IDC_FILENAME_EDIT)->EnableWindow(TRUE);
 	L(_T("Xfer thread terminated"));
 	return 0;
 }
