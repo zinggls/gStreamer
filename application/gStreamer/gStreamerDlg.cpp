@@ -607,7 +607,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			memcpy(buffers[i] + nOffset, &fileInfo.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
 			ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
 		}else {
-			if (pFile && !pEndPt->bIn) if (!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
+			if (pFile) if (!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
 		}
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
