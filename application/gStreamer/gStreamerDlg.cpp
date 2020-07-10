@@ -597,11 +597,13 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 		}
 	}
 
+	BYTE sync[4] = { 0x07,0x3a,0xb6,0x99 };	//내맘대로 임의로 정한 sync코드 (앞의 세자리는 ETI싱크임)
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
 			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
 				int nOffset = 0;
+				memcpy(buffers[i] + nOffset, sync, sizeof(sync)); nOffset += sizeof(sync);
 				memcpy(buffers[i] + nOffset, &fileInfo.nameSize_, sizeof(int)); nOffset += sizeof(int);
 				memcpy(buffers[i] + nOffset, fileInfo.name_, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
 				memcpy(buffers[i] + nOffset, &fileInfo.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
