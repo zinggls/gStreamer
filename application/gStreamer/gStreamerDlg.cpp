@@ -58,7 +58,6 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_ulFailureCount(0)
 	, m_ulBeginDataXferErrCount(0)
 	, m_KBps(_T(""))
-	, m_fileSelect(_T(""))
 	, m_strFileName(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -78,7 +77,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_BEGINDATAXFER_ERROR_COUNT_EDIT, m_ulBeginDataXferErrCount);
 	DDX_Control(pDX, IDC_KBPS_PROGRESS1, m_transferRate);
 	DDX_Text(pDX, IDC_KBPS_STATIC, m_KBps);
-	DDX_Text(pDX, IDC_FILE_SELECT_STATIC, m_fileSelect);
+	DDX_Control(pDX, IDC_FILE_SELECT_STATIC, m_fileSelect);
 	DDX_Control(pDX, IDC_FILE_SELECT_BUTTON, m_fileSelectBtn);
 	DDX_Text(pDX, IDC_FILENAME_EDIT, m_strFileName);
 }
@@ -165,6 +164,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 	GetDlgItem(IDC_SUCCESS_COUNT_EDIT)->EnableWindow(FALSE);
 	GetDlgItem(IDC_FAILURE_COUNT_EDIT)->EnableWindow(FALSE);
 	GetDlgItem(IDC_BEGINDATAXFER_ERROR_COUNT_EDIT)->EnableWindow(FALSE);
+	m_fileSelect.ShowWindow(SW_HIDE);
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -307,7 +307,6 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 		m_endpointCombo.EnableWindow(TRUE);
 	}
 	else {
-		m_fileSelect.Empty();
 		m_fileSelectBtn.ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_HIDE);
 		UpdateData(FALSE);
@@ -396,20 +395,20 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
 	if (m_pEndPt->Attributes == 2) { //BULK
 		if (!m_pEndPt->bIn) {
-			m_fileSelect = _T("File read from:");
 			m_strFileName = _T("");
 			m_fileSelectBtn.ShowWindow(SW_SHOW);
+			m_fileSelect.ShowWindow(SW_SHOW);
 			GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_SHOW);
 		} else {
-			m_fileSelect = _T("");
 			m_strFileName = _T("");
 			m_fileSelectBtn.ShowWindow(SW_HIDE);
 			GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_HIDE);
+			m_fileSelect.ShowWindow(SW_HIDE);
 		}
 	}else{
-		m_fileSelect.Empty();
 		m_fileSelectBtn.ShowWindow(SW_HIDE);
 		GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_HIDE);
+		m_fileSelect.ShowWindow(SW_HIDE);
 	}
 	UpdateData(FALSE);
 	OnCbnSelchangePpxCombo();

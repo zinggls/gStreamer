@@ -98,7 +98,7 @@ public:
 	clock_t m_startTime;
 	void showStats();
 	double m_curKBps;
-	CString m_fileSelect;
+	CStatic m_fileSelect;
 	CButton m_fileSelectBtn;
 	afx_msg void OnBnClickedFileSelectButton();
 	CString m_strFileName;
