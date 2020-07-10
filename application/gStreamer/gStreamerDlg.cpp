@@ -586,15 +586,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	FILEINFO fileInfo;
 	ASSERT(pEndPt->Attributes == 2);	//BULK만을 고려한다
 	if (pEndPt->bIn == FALSE) {	//BULK OUT
-		if (!pDlg->m_strFileName.IsEmpty()) {
-			pFile = new CFile(pDlg->m_strFileName, CFile::modeRead | CFile::typeBinary);
-			CString fileName = PathFindFileName(pDlg->m_strFileName.GetBuffer());
-			memset(fileInfo.name_, 0, sizeof(fileInfo.name_));
-			fileInfo.nameSize_ = fileName.GetLength() * sizeof(TCHAR);
-			memcpy(fileInfo.name_, fileName.GetBuffer(),fileInfo.nameSize_);
-			fileInfo.size_ = GetFileSize(pFile->m_hFile, NULL);
-			TRACE("fileName=%S(%d), size=%dbyte\n", fileInfo.name_,fileInfo.nameSize_,fileInfo.size_);
-		}
+		if (!pDlg->m_strFileName.IsEmpty()) pFile = GetFile(pDlg->m_strFileName, fileInfo);
 	}
 
 	BYTE sync[4] = { 0x07,0x3a,0xb6,0x99 };	//내맘대로 임의로 정한 sync코드 (앞의 세자리는 ETI싱크임)
@@ -602,14 +594,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
 			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
-				int nOffset = 0;
-				memcpy(buffers[i] + nOffset, sync, sizeof(sync)); nOffset += sizeof(sync);
-				memcpy(buffers[i] + nOffset, &fileInfo.nameSize_, sizeof(int)); nOffset += sizeof(int);
-				memcpy(buffers[i] + nOffset, fileInfo.name_, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
-				memcpy(buffers[i] + nOffset, &fileInfo.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
-				ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
-			}
-			else {
+				SetFileInfo(buffers[i], len, sync, sizeof(sync), fileInfo);
+			} else {
 				BOOL bRead = fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd);
 				ASSERT(bRead);	//큐잉 과정에서는 EOF에 다다르지 않는다는 것을 가정, EOF에 도달했다면 큐가 너무 크거나 파일이 len보다도 작은 경우임
 			}
@@ -806,4 +792,33 @@ BOOL CgStreamerDlg::fullRead(CFile *pFile, UCHAR *buffer,UINT nCount, BOOL bSeek
 		return FALSE;
 	}
 	return TRUE;
+}
+
+CFile* CgStreamerDlg::GetFile(CString pathFileName, FILEINFO &fileInfo)
+{
+	CFile *pFile = NULL;
+	if (!pathFileName.IsEmpty()) {
+		pFile = new CFile(pathFileName, CFile::modeRead | CFile::typeBinary);
+
+		CString name = PathFindFileName(pathFileName.GetBuffer());
+		memset(fileInfo.name_, 0, sizeof(fileInfo.name_));
+		fileInfo.nameSize_ = name.GetLength() * sizeof(TCHAR);
+		memcpy(fileInfo.name_, name.GetBuffer(), fileInfo.nameSize_);
+		fileInfo.size_ = GetFileSize(pFile->m_hFile, NULL);
+
+		TRACE("fileName=%S(%d), size=%dbyte\n", fileInfo.name_, fileInfo.nameSize_, fileInfo.size_);
+	}
+	return pFile;
+}
+
+int CgStreamerDlg::SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info)
+{
+	int nOffset = 0;
+	memcpy(buffer + nOffset, sync, syncSize); nOffset += syncSize;
+	memcpy(buffer + nOffset, &info.nameSize_, sizeof(int)); nOffset += sizeof(int);
+	memcpy(buffer + nOffset, info.name_, info.nameSize_); nOffset += info.nameSize_;
+	memcpy(buffer + nOffset, &info.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
+
+	ASSERT((ULONG)nOffset <= bufferSize);	//len보다 작거나 같다는 가정
+	return nOffset;
 }

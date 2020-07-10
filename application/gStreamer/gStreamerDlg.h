@@ -9,6 +9,12 @@
 class CCyUSBDevice;
 class CCyUSBEndPoint;
 
+typedef struct {
+	DWORD size_;
+	TCHAR name_[512];
+	int nameSize_;
+} FILEINFO;
+
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
 #define MAX_LOG					1000
@@ -103,10 +109,6 @@ public:
 	afx_msg void OnBnClickedFileSelectButton();
 	CString m_strFileName;
 	static BOOL fullRead(CFile *pFile, UCHAR *buffer, UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd);
+	static CFile* GetFile(CString pathFileName, FILEINFO &fileInfo);
+	static int SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
 };
-
-typedef struct {
-	DWORD size_;
-	TCHAR name_[512];
-	int nameSize_;
-} FILEINFO;
