@@ -598,24 +598,22 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	}
 
 	//Queue up before loop
-	BOOL bEofFound = FALSE;
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-		if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
-			int nOffset = 0;
-			memcpy(buffers[i] + nOffset, &fileInfo.nameSize_, sizeof(int)); nOffset += sizeof(int);
-			memcpy(buffers[i] + nOffset, fileInfo.name_, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
-			memcpy(buffers[i] + nOffset, &fileInfo.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
-			ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
-		}else {
-			if (pFile) if (!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
+		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
+			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
+				int nOffset = 0;
+				memcpy(buffers[i] + nOffset, &fileInfo.nameSize_, sizeof(int)); nOffset += sizeof(int);
+				memcpy(buffers[i] + nOffset, fileInfo.name_, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
+				memcpy(buffers[i] + nOffset, &fileInfo.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
+				ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
+			}
+			else {
+				BOOL bRead = fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd);
+				ASSERT(bRead);	//큐잉 과정에서는 EOF에 다다르지 않는다는 것을 가정, EOF에 도달했다면 큐가 너무 크거나 파일이 len보다도 작은 경우임
+			}
 		}
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
-	}
-
-	if (bEofFound) {
-		TRACE("EOF Found while initial queueing. File is too short compared to given queue size(%d)\n",pDlg->m_nQueueSize);
-		goto cleanup;
 	}
 
 	LONG rLen;
@@ -638,6 +636,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
+			BOOL bEofFound = FALSE;
 			if (pFile && !pEndPt->bIn) if (!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
 			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 			if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
@@ -655,7 +654,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 		}
 	}
 
-cleanup:
 	delete pFile;
 
 	// Deallocate memories
