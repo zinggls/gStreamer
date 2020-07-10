@@ -626,22 +626,22 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 			ASSERT(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
-			if (bInitFrame && i==0) {
-				if (memcmp(buffers[i], sync, sizeof(sync)) == 0) {	//sync를 통해서 파일로 부터 전송된 스트림임을 알 수 있다
-					int nOffset = sizeof(sync);
-					memset(fileInfo.name_, 0, sizeof(FILEINFO::name_));
-					memcpy(&fileInfo.nameSize_, buffers[i] + nOffset, sizeof(int)); nOffset += sizeof(int);
-					memcpy(fileInfo.name_, buffers[i] + nOffset, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
-					memcpy(&fileInfo.size_, buffers[i] + nOffset, sizeof(DWORD)); nOffset += sizeof(DWORD);
-					ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
-				}
-				bInitFrame = FALSE;
-			}
-
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
 				if (pDlg->m_bStart) { //Stop버튼이 눌러진 뒤에는 카운트 하지 않기
 					pDlg->m_ulSuccessCount++;
 					pDlg->m_ulBytesTransferred += rLen;
+				}
+
+				if (bInitFrame && i == 0) {
+					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) {	//sync를 통해서 파일로 부터 전송된 스트림임을 알 수 있다
+						int nOffset = sizeof(sync);
+						memset(fileInfo.name_, 0, sizeof(FILEINFO::name_));
+						memcpy(&fileInfo.nameSize_, buffers[i] + nOffset, sizeof(int)); nOffset += sizeof(int);
+						memcpy(fileInfo.name_, buffers[i] + nOffset, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
+						memcpy(&fileInfo.size_, buffers[i] + nOffset, sizeof(DWORD)); nOffset += sizeof(DWORD);
+						ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
+					}
+					bInitFrame = FALSE;
 				}
 			}else{
 				if (pDlg->m_bStart) { //Stop버튼이 눌러진 뒤에는 카운트 하지 않기
