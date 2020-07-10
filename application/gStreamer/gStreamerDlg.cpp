@@ -594,7 +594,15 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 	//Queue up before loop
 	BOOL bEofFound = FALSE;
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-		if (pFile && !pEndPt->bIn) if(!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
+		if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
+			int nOffset = 0;
+			memcpy(buffers[i] + nOffset, &fileInfo.nameSize_, sizeof(int)); nOffset += sizeof(int);
+			memcpy(buffers[i] + nOffset, fileInfo.name_, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
+			memcpy(buffers[i] + nOffset, &fileInfo.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
+			ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
+		}else {
+			if (pFile && !pEndPt->bIn) if (!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
+		}
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 	}
