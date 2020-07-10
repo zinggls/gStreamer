@@ -395,10 +395,17 @@ void CgStreamerDlg::OnCbnSelchangeEndpointCombo()
 
 	m_pEndPt = m_pUsbDev->EndPointOf((UCHAR)info.m_addr);
 	if (m_pEndPt->Attributes == 2) { //BULK
-		(m_pEndPt->bIn)? m_fileSelect = _T("File save to:"): m_fileSelect = _T("File read from:");
-		m_strFileName = _T("");
-		m_fileSelectBtn.ShowWindow(SW_SHOW);
-		GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_SHOW);
+		if (!m_pEndPt->bIn) {
+			m_fileSelect = _T("File read from:");
+			m_strFileName = _T("");
+			m_fileSelectBtn.ShowWindow(SW_SHOW);
+			GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_SHOW);
+		} else {
+			m_fileSelect = _T("");
+			m_strFileName = _T("");
+			m_fileSelectBtn.ShowWindow(SW_HIDE);
+			GetDlgItem(IDC_FILENAME_EDIT)->ShowWindow(SW_HIDE);
+		}
 	}else{
 		m_fileSelect.Empty();
 		m_fileSelectBtn.ShowWindow(SW_HIDE);
