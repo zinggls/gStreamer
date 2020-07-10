@@ -596,8 +596,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
 				SetFileInfo(buffers[i], len, sync, sizeof(sync), fileInfo);
 			} else {
-				BOOL bRead = fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd);
-				ASSERT(bRead);	//큐잉 과정에서는 EOF에 다다르지 않는다는 것을 가정, EOF에 도달했다면 큐가 너무 크거나 파일이 len보다도 작은 경우임
+				UINT nRead = Read(pFile, buffers[i], len);
+				ASSERT(nRead>0);	//큐잉 과정에서는 EOF에 다다르지 않는다는 것을 가정, EOF에 도달했다면 큐가 너무 크거나 파일이 len보다도 작은 경우임
 			}
 		}
 		contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
@@ -613,10 +613,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			ASSERT(pEndPt->Attributes == 2);	//Bulk전송 경우만 고려하는 경우
 
 			if (pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i])) {
-				if (pDlg->m_bStart) { //Stop버튼이 눌러진 뒤에는 카운트 하지 않기
-					pDlg->m_ulSuccessCount++;
-					pDlg->m_ulBytesTransferred += rLen;
-				}
+				pDlg->m_ulSuccessCount++;
+				pDlg->m_ulBytesTransferred += rLen;
 
 				if (bInitFrame && i == 0) {
 					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) {	//sync를 통해서 파일로 부터 전송된 스트림임을 알 수 있다
@@ -630,17 +628,25 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 					bInitFrame = FALSE;
 				}
 			}else{
-				if (pDlg->m_bStart) { //Stop버튼이 눌러진 뒤에는 카운트 하지 않기
-					pDlg->m_ulFailureCount++;
-					TRACE("Failcount=%u\n", pDlg->m_ulFailureCount);
-				}
+				pDlg->m_ulFailureCount++;
+				TRACE("Failcount=%u\n", pDlg->m_ulFailureCount);
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
 			BOOL bEofFound = FALSE;
-			if (pFile && !pEndPt->bIn) if (!fullRead(pFile, buffers[i], len, FALSE, TRUE, pDlg->m_hWnd)) bEofFound = TRUE;
-			contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
-			if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
+			if (pFile && !pEndPt->bIn) {
+				UINT nRead = Read(pFile, buffers[i], len);
+				if (nRead > 0) {
+					contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
+					if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
+				} else { //EOF
+				}
+			}
+
+			if (pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
+				pDlg->m_bStart = FALSE;
+				break;
+			}
 
 			if (bEofFound) {
 				pDlg->m_bStart = FALSE;
@@ -659,9 +665,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	// Deallocate memories
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
-		pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i]);
-		delete [] buffers[i];
-		delete [] isoPktInfos[i];
+		delete[] buffers[i];
+		delete[] isoPktInfos[i];
 	}
 
 	delete [] contexts;
@@ -723,6 +728,7 @@ LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 	GetDlgItem(IDC_FILE_SELECT_BUTTON)->EnableWindow(TRUE);
 	GetDlgItem(IDC_FILENAME_EDIT)->EnableWindow(TRUE);
 	KillTimer(COUNT_REFRESH_TIMER);
+	UpdateData(FALSE);
 	L(_T("Xfer thread terminated"));
 	return 0;
 }
@@ -792,6 +798,12 @@ BOOL CgStreamerDlg::fullRead(CFile *pFile, UCHAR *buffer,UINT nCount, BOOL bSeek
 		return FALSE;
 	}
 	return TRUE;
+}
+
+UINT CgStreamerDlg::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
+{
+	memset(buffer, 0, nCount);	//버퍼는 nCount까지 모두 0으로 초기화한다. nCount까지 못읽는 경우 나머지 공간은 0으로 채워진다
+	return pFile->Read(buffer, nCount);	//BULK OUT인 경우 파일로 부터 읽는다
 }
 
 CFile* CgStreamerDlg::GetFile(CString pathFileName, FILEINFO &fileInfo)

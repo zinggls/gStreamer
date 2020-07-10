@@ -111,4 +111,5 @@ public:
 	static BOOL fullRead(CFile *pFile, UCHAR *buffer, UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd);
 	static CFile* GetFile(CString pathFileName, FILEINFO &fileInfo);
 	static int SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
+	static UINT Read(CFile *pFile, UCHAR *buffer, UINT nCount);
 };
