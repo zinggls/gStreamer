@@ -642,6 +642,10 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				} else { //EOF
 				}
 			}
+			else {
+				contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
+				if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
+			}
 
 			if (pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
 				pDlg->m_bStart = FALSE;
