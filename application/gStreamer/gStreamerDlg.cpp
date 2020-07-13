@@ -618,14 +618,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				pDlg->m_ulBytesTransferred += rLen;
 
 				if (bInitFrame && i == 0) {
-					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) {	//sync를 통해서 파일로 부터 전송된 스트림임을 알 수 있다
-						int nOffset = sizeof(sync);
-						memset(fileInfo.name_, 0, sizeof(FILEINFO::name_));
-						memcpy(&fileInfo.nameSize_, buffers[i] + nOffset, sizeof(int)); nOffset += sizeof(int);
-						memcpy(fileInfo.name_, buffers[i] + nOffset, fileInfo.nameSize_); nOffset += fileInfo.nameSize_;
-						memcpy(&fileInfo.size_, buffers[i] + nOffset, sizeof(DWORD)); nOffset += sizeof(DWORD);
-						ASSERT((ULONG)nOffset <= len);	//len보다 작거나 같다는 가정
-					}
+					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) GetFileInfo(buffers[i], len, sync, sizeof(sync), fileInfo);
 					bInitFrame = FALSE;
 				}
 			}else{
@@ -829,6 +822,18 @@ int CgStreamerDlg::SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int 
 	memcpy(buffer + nOffset, &info.nameSize_, sizeof(int)); nOffset += sizeof(int);
 	memcpy(buffer + nOffset, info.name_, info.nameSize_); nOffset += info.nameSize_;
 	memcpy(buffer + nOffset, &info.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
+
+	ASSERT((ULONG)nOffset <= bufferSize);	//len보다 작거나 같다는 가정
+	return nOffset;
+}
+
+int CgStreamerDlg::GetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info)
+{
+	int nOffset = syncSize;
+	memset(info.name_, 0, sizeof(FILEINFO::name_));
+	memcpy(&info.nameSize_, buffer + nOffset, sizeof(int)); nOffset += sizeof(int);
+	memcpy(info.name_, buffer + nOffset, info.nameSize_); nOffset += info.nameSize_;
+	memcpy(&info.size_, buffer + nOffset, sizeof(DWORD)); nOffset += sizeof(DWORD);
 
 	ASSERT((ULONG)nOffset <= bufferSize);	//len보다 작거나 같다는 가정
 	return nOffset;
