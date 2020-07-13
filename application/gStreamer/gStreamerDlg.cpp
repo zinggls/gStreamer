@@ -633,7 +633,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
-			BOOL bEofFound = FALSE;
 			if (pFile && !pEndPt->bIn) {
 				UINT nRead = Read(pFile, buffers[i], len);
 				if (nRead > 0) {
@@ -650,12 +649,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			if (pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
 				pDlg->m_bStart = FALSE;
 				break;
-			}
-
-			if (bEofFound) {
-				pDlg->m_bStart = FALSE;
-				pDlg->showStats();
-				break;	//EOF가 발견되면 루프 탈출
 			}
 
 			if (i == (pDlg->m_nQueueSize - 1)) {	//큐의 맨마지막 요소
