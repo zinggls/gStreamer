@@ -96,6 +96,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_WM_TIMER()
 	ON_MESSAGE(WM_THREAD_TERMINATED, &CgStreamerDlg::OnThreadTerminated)
 	ON_MESSAGE(WM_END_OF_FILE, &CgStreamerDlg::OnEndOfFile)
+	ON_MESSAGE(WM_SYNC_FOUND, &CgStreamerDlg::OnSyncFound)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
@@ -618,7 +619,10 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				pDlg->m_ulBytesTransferred += rLen;
 
 				if (bInitFrame && i == 0) {
-					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) GetFileInfo(buffers[i], len, sizeof(sync), fileInfo);
+					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) {
+						pDlg->PostMessage(WM_SYNC_FOUND);
+						GetFileInfo(buffers[i], len, sizeof(sync), fileInfo);
+					}
 					bInitFrame = FALSE;
 				}
 			}else{
@@ -837,4 +841,10 @@ int CgStreamerDlg::GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FI
 
 	ASSERT((ULONG)nOffset <= bufferSize);	//len보다 작거나 같다는 가정
 	return nOffset;
+}
+
+LRESULT CgStreamerDlg::OnSyncFound(WPARAM wParam, LPARAM lParam)
+{
+	L(_T("Sync found"));
+	return 0;
 }
