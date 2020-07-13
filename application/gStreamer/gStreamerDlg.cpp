@@ -623,7 +623,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				}
 			}else{
 				pDlg->m_ulFailureCount++;
-				TRACE("Failcount=%u\n", pDlg->m_ulFailureCount);
 			}
 
 			//새롭게 비워진 큐에 전송 요청을 보냄
