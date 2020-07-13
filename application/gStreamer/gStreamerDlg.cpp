@@ -631,7 +631,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				if (nRead > 0) {
 					contexts[i] = pEndPt->BeginDataXfer(buffers[i], len, &pDlg->m_inOvLap[i]);
 					if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
-				} else { //EOF
+				} else {
+					//EOF이면 더이상 읽을 필요없고 따라서 BeginDataXfer를 호출할 필요도 없다
 				}
 			}
 			else {
