@@ -584,6 +584,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	CFile *pFile = NULL;
 	FILEINFO fileInfo;
+	memset(&fileInfo, 0, sizeof(fileInfo));
 	ASSERT(pEndPt->Attributes == 2);	//BULK만을 고려한다
 	if (pEndPt->bIn == FALSE) {	//BULK OUT
 		if (!pDlg->m_strFileName.IsEmpty()) pFile = GetFile(pDlg->m_strFileName, fileInfo);
@@ -646,7 +647,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 			}
 
-			if (pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
+			if (fileInfo.size_>0 && pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
 				pDlg->m_bStart = FALSE;
 				break;
 			}
