@@ -620,8 +620,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 				if (bInitFrame && i == 0) {
 					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) {
-						pDlg->PostMessage(WM_SYNC_FOUND);
 						GetFileInfo(buffers[i], len, sizeof(sync), fileInfo);
+						pDlg->PostMessage(WM_SYNC_FOUND,(WPARAM)&fileInfo,0);
 					}
 					bInitFrame = FALSE;
 				}
@@ -845,6 +845,8 @@ int CgStreamerDlg::GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FI
 
 LRESULT CgStreamerDlg::OnSyncFound(WPARAM wParam, LPARAM lParam)
 {
-	L(_T("Sync found"));
+	FILEINFO *pFileInfo = (FILEINFO*)wParam;
+	CString name(pFileInfo->name_);
+	L(_T("Sync found,FileName=")+name);
 	return 0;
 }
