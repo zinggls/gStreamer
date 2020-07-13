@@ -663,6 +663,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 
 	// Deallocate memories
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
+		if(pFile==NULL) pEndPt->FinishDataXfer(buffers[i], rLen, &pDlg->m_inOvLap[i], contexts[i]);
 		delete[] buffers[i];
 		delete[] isoPktInfos[i];
 	}
