@@ -50,7 +50,7 @@ END_MESSAGE_MAP()
 
 // CgStreamerDlg 대화 상자
 
-
+BYTE CgStreamerDlg::sync[4] = { 0x07,0x3a,0xb6,0x99 };	//내맘대로 임의로 정한 sync코드 (앞의 세자리는 ETI싱크임)
 
 CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0), m_nPPX(0)
@@ -591,7 +591,6 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 		if (!pDlg->m_strFileName.IsEmpty()) pFile = GetFile(pDlg->m_strFileName, fileInfo);
 	}
 
-	BYTE sync[4] = { 0x07,0x3a,0xb6,0x99 };	//내맘대로 임의로 정한 sync코드 (앞의 세자리는 ETI싱크임)
 	//Queue up before loop
 	for (int i = 0; i < pDlg->m_nQueueSize; i++) {
 		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임

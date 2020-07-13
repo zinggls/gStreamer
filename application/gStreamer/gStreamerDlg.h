@@ -113,4 +113,5 @@ public:
 	static int SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
 	static UINT Read(CFile *pFile, UCHAR *buffer, UINT nCount);
 	static int GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info);
+	static BYTE sync[4];
 };
