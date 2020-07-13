@@ -97,6 +97,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_THREAD_TERMINATED, &CgStreamerDlg::OnThreadTerminated)
 	ON_MESSAGE(WM_END_OF_FILE, &CgStreamerDlg::OnEndOfFile)
 	ON_MESSAGE(WM_SYNC_FOUND, &CgStreamerDlg::OnSyncFound)
+	ON_MESSAGE(WM_FILE_RECEIVED, &CgStreamerDlg::OnFileReceived)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
@@ -645,6 +646,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			}
 
 			if (fileInfo.size_>0 && pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
+				pDlg->PostMessage(WM_FILE_RECEIVED,(WPARAM)&fileInfo,(LPARAM)pDlg->m_ulBytesTransferred);
 				pDlg->m_bStart = FALSE;
 				break;
 			}
@@ -848,5 +850,15 @@ LRESULT CgStreamerDlg::OnSyncFound(WPARAM wParam, LPARAM lParam)
 	FILEINFO *pFileInfo = (FILEINFO*)wParam;
 	CString name(pFileInfo->name_);
 	L(_T("Sync found,FileName=")+name);
+	return 0;
+}
+
+LRESULT CgStreamerDlg::OnFileReceived(WPARAM wParam, LPARAM lParam)
+{
+	ASSERT(wParam);
+
+	CString str;
+	str.Format(_T("%s(%d bytes), %d bytes received"), ((FILEINFO*)wParam)->name_, ((FILEINFO*)wParam)->size_,(ULONGLONG)lParam);
+	L(str);
 	return 0;
 }

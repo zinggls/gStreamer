@@ -23,6 +23,7 @@ typedef struct {
 #define	WM_THREAD_TERMINATED	(WM_USER+1)
 #define WM_END_OF_FILE			(WM_USER+2)
 #define WM_SYNC_FOUND			(WM_USER+3)
+#define WM_FILE_RECEIVED		(WM_USER+4)
 
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
@@ -59,6 +60,7 @@ protected:
 	afx_msg LRESULT OnThreadTerminated(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnEndOfFile(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnSyncFound(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnFileReceived(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();
