@@ -112,5 +112,5 @@ public:
 	static CFile* GetFile(CString pathFileName, FILEINFO &fileInfo);
 	static int SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
 	static UINT Read(CFile *pFile, UCHAR *buffer, UINT nCount);
-	static int GetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
+	static int GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info);
 };

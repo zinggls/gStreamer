@@ -619,7 +619,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				pDlg->m_ulBytesTransferred += rLen;
 
 				if (bInitFrame && i == 0) {
-					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) GetFileInfo(buffers[i], len, sync, sizeof(sync), fileInfo);
+					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) GetFileInfo(buffers[i], len, sizeof(sync), fileInfo);
 					bInitFrame = FALSE;
 				}
 			}else{
@@ -828,7 +828,7 @@ int CgStreamerDlg::SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int 
 	return nOffset;
 }
 
-int CgStreamerDlg::GetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info)
+int CgStreamerDlg::GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info)
 {
 	int nOffset = syncSize;
 	memset(info.name_, 0, sizeof(FILEINFO::name_));
