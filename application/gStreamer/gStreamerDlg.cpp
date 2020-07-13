@@ -518,6 +518,7 @@ void CgStreamerDlg::OnBnClickedLogClearButton()
 	m_log.ResetContent();
 	m_transferRate.SetPos(0);
 	m_KBps.Empty();
+	m_ulSuccessCount = m_ulFailureCount = m_ulBeginDataXferErrCount = 0;
 	UpdateData(FALSE);
 }
 
