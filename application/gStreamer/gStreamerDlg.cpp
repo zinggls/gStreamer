@@ -530,6 +530,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (!m_bStart) {
 		m_bStart = TRUE;
+		adjustQueueSize();
 		m_pThread = AfxBeginThread(Xfer, this);
 		if (!m_pThread) {
 			m_bStart = FALSE;
@@ -877,4 +878,29 @@ LRESULT CgStreamerDlg::OnFileReceived(WPARAM wParam, LPARAM lParam)
 	str.Format(_T("%s(%d bytes), %d bytes received"), ((FILEINFO*)wParam)->name_, ((FILEINFO*)wParam)->size_,(ULONGLONG)lParam);
 	L(str);
 	return 0;
+}
+
+void CgStreamerDlg::adjustQueueSize()
+{
+	ASSERT(m_pEndPt);
+	if (m_pEndPt->bIn) return;	//IN의 경우는 조정 필요없음
+
+	ULONG len = m_pEndPt->MaxPktSize * m_nPPX;
+
+	if (!m_strFileName.IsEmpty()) {
+		CFile f(m_strFileName, CFile::modeRead | CFile::typeBinary);
+		DWORD fileSize = GetFileSize(f.m_hFile, NULL);
+		f.Close();
+
+		if (fileSize < (len*m_nQueueSize)) {
+			//맨처음 큐요소 : 파일사이즈등의 정보 전송, 큐에는 두번째 이후부터 파일로 부터 읽은 데이터가 들어감.
+			//파일 전송의 경우 정상적으로 파일이 수신되려면 전송시 큐는 최소 2개 이상이어야 함
+			//이는 본 프로그램에서 파일을 전송하고 수신하는 규칙을 정의한 것에 따라 생긴 제약임
+			int nPrevQueueSize = m_nQueueSize;
+			m_nQueueSize = 2;
+			L(_T("fileSize(%d) is less then len*queue size(%d), queue size decreased as %d"), fileSize, len*nPrevQueueSize, m_nQueueSize);
+
+			m_queueCombo.SetCurSel(1);	//하드코딩 1은 큐사이즈 m_nQueueSize=2에 해당함
+		}
+	}
 }
