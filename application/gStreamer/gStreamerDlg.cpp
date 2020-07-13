@@ -660,8 +660,8 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 				if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 			}
 
-			if (pEndPt->bIn && fileInfo.size_>0 && pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
-				pDlg->PostMessage(WM_FILE_RECEIVED,(WPARAM)&fileInfo,(LPARAM)pDlg->m_ulBytesTransferred);
+			if (fileInfo.size_>0 && pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
+				if(pEndPt->bIn) pDlg->PostMessage(WM_FILE_RECEIVED,(WPARAM)&fileInfo,(LPARAM)pDlg->m_ulBytesTransferred);
 				pDlg->m_bStart = FALSE;
 				pFile->Close();
 				break;
