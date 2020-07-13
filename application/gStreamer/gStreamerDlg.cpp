@@ -607,6 +607,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 		if (pEndPt->NtStatus || pEndPt->UsbdStatus) pDlg->m_ulBeginDataXferErrCount++;
 	}
 
+	UINT receivedFileSize = 0;
 	BOOL bInitFrame = pEndPt->bIn;	//IN인 경우는 맨처음 도착하는 스트림이 파일을 읽어 보내는것인지 아닌지를 판단해야 함
 	LONG rLen;
 	while (pDlg->m_bStart) {
@@ -623,8 +624,22 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 					if (memcmp(buffers[i], sync, sizeof(sync)) == 0) {
 						GetFileInfo(buffers[i], len, sizeof(sync), fileInfo);
 						pDlg->PostMessage(WM_SYNC_FOUND,(WPARAM)&fileInfo,0);
+						pFile = new CFile(fileInfo.name_, CFile::modeCreate | CFile::modeWrite);
+						ASSERT(pFile);	// TODO 파일 생성과정에서 NULL이 나올수도 있음
 					}
 					bInitFrame = FALSE;
+				}
+				else {
+					if (pEndPt->bIn && pFile) {
+						if ((receivedFileSize + rLen) <= fileInfo.size_) {
+							pFile->Write(buffers[i], rLen);
+							receivedFileSize += rLen;
+						} else {
+							UINT size = fileInfo.size_ - receivedFileSize;
+							pFile->Write(buffers[i],size);
+							receivedFileSize += size;
+						}
+					}
 				}
 			}else{
 				pDlg->m_ulFailureCount++;
@@ -648,6 +663,7 @@ UINT CgStreamerDlg::Xfer(LPVOID pParam)
 			if (fileInfo.size_>0 && pDlg->m_ulBytesTransferred >= fileInfo.size_ + len) {
 				pDlg->PostMessage(WM_FILE_RECEIVED,(WPARAM)&fileInfo,(LPARAM)pDlg->m_ulBytesTransferred);
 				pDlg->m_bStart = FALSE;
+				pFile->Close();
 				break;
 			}
 
