@@ -213,6 +213,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="XferBulkIn.h" />
     <ClInclude Include="XferBulkOut.h" />
+    <ClInclude Include="fileInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gStreamer.cpp" />

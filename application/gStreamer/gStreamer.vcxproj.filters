@@ -42,6 +42,9 @@
     <ClInclude Include="XferBulkOut.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="fileInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gStreamer.cpp">

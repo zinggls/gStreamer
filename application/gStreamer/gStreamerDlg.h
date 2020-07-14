@@ -5,15 +5,10 @@
 #pragma once
 #include "afxwin.h"
 #include "afxcmn.h"
+#include "fileInfo.h"
 
 class CCyUSBDevice;
 class CCyUSBEndPoint;
-
-typedef struct {
-	DWORD size_;
-	TCHAR name_[512];
-	int nameSize_;
-} FILEINFO;
 
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
