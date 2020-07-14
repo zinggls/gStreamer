@@ -211,6 +211,8 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="userDefinedMessage.h" />
+    <ClInclude Include="XferBulk.h" />
     <ClInclude Include="XferBulkIn.h" />
     <ClInclude Include="XferBulkOut.h" />
     <ClInclude Include="fileInfo.h" />
@@ -224,6 +226,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="XferBulk.cpp" />
     <ClCompile Include="XferBulkIn.cpp" />
     <ClCompile Include="XferBulkOut.cpp" />
   </ItemGroup>

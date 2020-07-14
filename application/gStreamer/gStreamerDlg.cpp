@@ -7,6 +7,8 @@
 #include "gStreamerDlg.h"
 #include "afxdialogex.h"
 #include <CyAPI.h>
+#include "XferBulkIn.h"
+#include "XferBulkOut.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -59,6 +61,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_ulBeginDataXferErrCount(0)
 	, m_KBps(_T(""))
 	, m_strFileName(_T(""))
+	, m_pXfer(NULL)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -531,7 +534,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 	if (!m_bStart) {
 		m_bStart = TRUE;
 		adjustQueueSize();
-		(m_pEndPt->bIn)? m_pThread = AfxBeginThread(XferBulkIn, this) : m_pThread = AfxBeginThread(XferBulkOut, this);
+		m_pThread = AfxBeginThread(XferBulk, this);
 		if (!m_pThread) {
 			m_bStart = FALSE;
 			L(_T("Failure in creating thread"));
@@ -752,7 +755,9 @@ void CgStreamerDlg::terminateThread()
 {
 	L(_T("Xfer thread terminating..."));
 	m_bStart = FALSE;
+	m_pXfer->m_bStart = m_bStart;
 	for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_inOvLap[i].hEvent);
+	m_pXfer->sendEvent();
 	if (m_pThread) WaitForSingleObject(m_pThread->m_hThread, INFINITE);
 }
 
@@ -1103,5 +1108,37 @@ UINT CgStreamerDlg::XferBulkIn(LPVOID pParam)
 	delete[] buffers;
 
 	pDlg->PostMessage(WM_THREAD_TERMINATED);
+	return 0;
+}
+
+UINT CgStreamerDlg::XferBulk(LPVOID pParam)
+{
+	CgStreamerDlg *pDlg = (CgStreamerDlg*)pParam;
+	ASSERT(pDlg);
+	CCyUSBEndPoint *pEndPt = pDlg->m_pEndPt;
+	ASSERT(pEndPt);
+	ASSERT(pEndPt->Attributes == 2);
+
+	pDlg->m_pXfer = NULL;
+	if(pEndPt->bIn) {
+		pDlg->m_pXfer = new CXferBulkIn();
+	} else {
+		CXferBulkOut *pBulkOut = new CXferBulkOut();
+		pBulkOut->m_strFileName = pDlg->m_strFileName;
+		pDlg->m_pXfer = pBulkOut;
+	}
+
+	//객체 시작전에 필요한 값들 설정
+	pDlg->m_pXfer->m_pEndPt = pDlg->m_pEndPt;
+	pDlg->m_pXfer->m_nPPX = pDlg->m_nPPX;
+	pDlg->m_pXfer->m_nQueueSize = pDlg->m_nQueueSize;
+	pDlg->m_pXfer->m_bStart = pDlg->m_bStart;
+	pDlg->m_pXfer->m_hWnd = pDlg->m_hWnd;
+
+	pDlg->m_pXfer->open();
+	pDlg->m_pXfer->process();
+	pDlg->m_pXfer->close();
+
+	delete pDlg->m_pXfer;
 	return 0;
 }

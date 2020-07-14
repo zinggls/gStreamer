@@ -6,19 +6,16 @@
 #include "afxwin.h"
 #include "afxcmn.h"
 #include "fileInfo.h"
+#include "userDefinedMessage.h"
 
 class CCyUSBDevice;
 class CCyUSBEndPoint;
+class CXferBulk;
 
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
 #define MAX_LOG					1000
 #define MAX_KBPS				625				//625MBps, FX3는 Max 5G bps이므로 바이트단위로는 5/8 = 0.625 GBps = 625 MBps
-
-#define	WM_THREAD_TERMINATED	(WM_USER+1)
-#define WM_END_OF_FILE			(WM_USER+2)
-#define WM_SYNC_FOUND			(WM_USER+3)
-#define WM_FILE_RECEIVED		(WM_USER+4)
 
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
@@ -116,4 +113,6 @@ public:
 	void adjustQueueSize();
 	static UINT XferBulkOut(LPVOID pParam);
 	static UINT XferBulkIn(LPVOID pParam);
+	static UINT XferBulk(LPVOID pParam);
+	CXferBulk *m_pXfer;
 };
