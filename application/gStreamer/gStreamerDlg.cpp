@@ -1155,12 +1155,10 @@ UINT CgStreamerDlg::XferBulk(LPVOID pParam)
 
 LRESULT CgStreamerDlg::OnDataSent(WPARAM wParam, LPARAM lParam)
 {
-	UpdateData(FALSE);
 	return 0;
 }
 
 LRESULT CgStreamerDlg::OnDataReceived(WPARAM wParam, LPARAM lParam)
 {
-	UpdateData(FALSE);
 	return 0;
 }
