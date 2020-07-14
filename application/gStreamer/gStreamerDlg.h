@@ -53,6 +53,8 @@ protected:
 	afx_msg LRESULT OnEndOfFile(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnSyncFound(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnFileReceived(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnDataSent(WPARAM wParam, LPARAM lParam);
+	afx_msg LRESULT OnDataReceived(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnDestroy();

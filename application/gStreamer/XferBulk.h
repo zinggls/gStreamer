@@ -21,12 +21,12 @@ public:
 	CCyUSBEndPoint *m_pEndPt;
 	int m_nPPX;
 	int m_nQueueSize;
-	ULONGLONG m_ulSuccessCount;
-	ULONGLONG m_ulFailureCount;
-	ULONGLONG m_ulBeginDataXferErrCount;
-	ULONGLONG m_ulBytesTransferred;
-	clock_t m_startTime;
-	double m_curKBps;
+	ULONGLONG *m_pUlSuccessCount;
+	ULONGLONG *m_pUlFailureCount;
+	ULONGLONG *m_pUlBeginDataXferErrCount;
+	ULONGLONG *m_pUlBytesTransferred;
+	clock_t *m_pStartTime;
+	double *m_pCurKBps;
 	FILEINFO m_fileInfo;
 	BOOL m_bStart;
 	HWND m_hWnd;

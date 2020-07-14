@@ -24,7 +24,7 @@ int CXferBulkIn::process()
 {
 	for (int i = 0; i < m_nQueueSize; i++) {
 		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) m_ulBeginDataXferErrCount++;
+		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 	}
 
 	UINT receivedFileSize = 0;
@@ -35,8 +35,8 @@ int CXferBulkIn::process()
 			m_pEndPt->WaitForXfer(&m_ovLap[i], INFINITE);
 
 			if (m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i])) {
-				m_ulSuccessCount++;
-				m_ulBytesTransferred += rLen;
+				(*m_pUlSuccessCount)++;
+				(*m_pUlBytesTransferred) += rLen;
 
 				if (bInitFrame && i == 0) {
 					if (memcmp(m_buffers[i], sync, sizeof(sync)) == 0) {
@@ -60,17 +60,19 @@ int CXferBulkIn::process()
 						receivedFileSize += size;
 					}
 				}
+				ASSERT(m_hWnd != NULL);
+				::PostMessage(m_hWnd, WM_DATA_RECEIVED, 0, 0);
 			}
 			else {
-				m_ulFailureCount++;
+				(*m_pUlFailureCount)++;
 			}
 
 			m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-			if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) m_ulBeginDataXferErrCount++;
+			if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 
-			if (m_fileInfo.size_>0 && m_ulBytesTransferred >= m_fileInfo.size_ + m_uLen) {
+			if (m_fileInfo.size_>0 && (*m_pUlBytesTransferred >= (m_fileInfo.size_ + m_uLen))) {
 				ASSERT(m_hWnd != NULL);
-				::PostMessage(m_hWnd,WM_FILE_RECEIVED, (WPARAM)&m_fileInfo, (LPARAM)m_ulBytesTransferred);
+				::PostMessage(m_hWnd, WM_FILE_RECEIVED, (WPARAM)&m_fileInfo, (LPARAM)*m_pUlBytesTransferred);
 				m_bStart = FALSE;
 				m_pFile->Close();
 				break;

@@ -4,3 +4,5 @@
 #define WM_END_OF_FILE			(WM_USER+2)
 #define WM_SYNC_FOUND			(WM_USER+3)
 #define WM_FILE_RECEIVED		(WM_USER+4)
+#define WM_DATA_SENT			(WM_USER+5)
+#define WM_DATA_RECEIVED		(WM_USER+6)

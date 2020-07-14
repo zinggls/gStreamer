@@ -38,7 +38,7 @@ int CXferBulkOut::process()
 			}
 		}
 		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) m_ulBeginDataXferErrCount++;
+		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 	}
 
 	LONG rLen;
@@ -47,16 +47,18 @@ int CXferBulkOut::process()
 			m_pEndPt->WaitForXfer(&m_ovLap[i], INFINITE);
 
 			if (m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i])) {
-				m_ulSuccessCount++;
-				m_ulBytesTransferred += rLen;
+				(*m_pUlSuccessCount)++;
+				(*m_pUlBytesTransferred) += rLen;
+				ASSERT(m_hWnd != NULL);
+				::PostMessage(m_hWnd, WM_DATA_SENT, 0, 0);
 			} else {
-				m_ulFailureCount++;
+				(*m_pUlFailureCount)++;
 			}
 
 			if (m_pFile) {
 				if (Read(m_pFile, m_buffers[i], m_uLen) > 0) {
 					m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-					if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) m_ulBeginDataXferErrCount++;
+					if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 				}
 				else {
 					//EOF이면 더이상 읽을 필요없고 따라서 BeginDataXfer를 호출할 필요도 없다
@@ -64,10 +66,10 @@ int CXferBulkOut::process()
 			}
 			else {
 				m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-				if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) m_ulBeginDataXferErrCount++;
+				if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 			}
 
-			if (m_fileInfo.size_>0 && m_ulBytesTransferred >= m_fileInfo.size_ + m_uLen) {
+			if (m_fileInfo.size_>0 && (*m_pUlBytesTransferred >= (m_fileInfo.size_ + m_uLen))) {
 				m_bStart = FALSE;
 				m_pFile->Close();
 				break;

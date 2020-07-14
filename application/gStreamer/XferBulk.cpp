@@ -7,8 +7,8 @@ BYTE CXferBulk::sync[4] = { 0x07,0x3a,0xb6,0x99 };	//내맘대로 임의로 정한 sync코
 
 CXferBulk::CXferBulk()
 	:m_pEndPt(NULL), m_uLen(0), m_nPPX(0), m_buffers(NULL), m_contexts(NULL), m_nQueueSize(0),
-	m_ulSuccessCount(0), m_ulFailureCount(0), m_ulBeginDataXferErrCount(0), m_ulBytesTransferred(0),
-	m_curKBps(0.0), m_pFile(NULL), m_bStart(FALSE), m_hWnd(NULL)
+	m_pUlSuccessCount(NULL), m_pUlFailureCount(NULL), m_pUlBeginDataXferErrCount(NULL), m_pUlBytesTransferred(NULL),
+	m_pCurKBps(NULL), m_pFile(NULL), m_bStart(FALSE), m_hWnd(NULL)
 {
 	memset(&m_fileInfo, 0, sizeof(FILEINFO));
 }
@@ -38,9 +38,15 @@ int CXferBulk::open()
 		memset(m_buffers[i], 0xEF, m_uLen);
 	}
 
-	m_ulSuccessCount = m_ulFailureCount = m_ulBeginDataXferErrCount = m_ulBytesTransferred = 0;
-	m_curKBps = 0.0;
-	m_startTime = clock();
+	ASSERT(m_pUlSuccessCount);
+	ASSERT(m_pUlFailureCount);
+	ASSERT(m_pUlBeginDataXferErrCount);
+	ASSERT(m_pUlBytesTransferred);
+	ASSERT(m_pCurKBps);
+	ASSERT(m_pStartTime);
+	*m_pUlSuccessCount = *m_pUlFailureCount = *m_pUlBeginDataXferErrCount = *m_pUlBytesTransferred = 0;
+	*m_pCurKBps = 0.0;
+	*m_pStartTime = clock();
 	return 0;
 }
 

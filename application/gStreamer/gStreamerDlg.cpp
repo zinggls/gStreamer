@@ -101,6 +101,8 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_END_OF_FILE, &CgStreamerDlg::OnEndOfFile)
 	ON_MESSAGE(WM_SYNC_FOUND, &CgStreamerDlg::OnSyncFound)
 	ON_MESSAGE(WM_FILE_RECEIVED, &CgStreamerDlg::OnFileReceived)
+	ON_MESSAGE(WM_DATA_SENT, &CgStreamerDlg::OnDataSent)
+	ON_MESSAGE(WM_DATA_RECEIVED, &CgStreamerDlg::OnDataReceived)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
@@ -1135,11 +1137,29 @@ UINT CgStreamerDlg::XferBulk(LPVOID pParam)
 	pDlg->m_pXfer->m_nQueueSize = pDlg->m_nQueueSize;
 	pDlg->m_pXfer->m_bStart = pDlg->m_bStart;
 	pDlg->m_pXfer->m_hWnd = pDlg->m_hWnd;
+	pDlg->m_pXfer->m_pUlSuccessCount = &pDlg->m_ulSuccessCount;
+	pDlg->m_pXfer->m_pUlFailureCount = &pDlg->m_ulFailureCount;
+	pDlg->m_pXfer->m_pUlBeginDataXferErrCount = &pDlg->m_ulBeginDataXferErrCount;
+	pDlg->m_pXfer->m_pUlBytesTransferred = &pDlg->m_ulBytesTransferred;
+	pDlg->m_pXfer->m_pCurKBps = &pDlg->m_curKBps;
+	pDlg->m_pXfer->m_pStartTime = &pDlg->m_startTime;
 
 	pDlg->m_pXfer->open();
 	pDlg->m_pXfer->process();
 	pDlg->m_pXfer->close();
 
 	delete pDlg->m_pXfer;
+	return 0;
+}
+
+LRESULT CgStreamerDlg::OnDataSent(WPARAM wParam, LPARAM lParam)
+{
+	UpdateData(FALSE);
+	return 0;
+}
+
+LRESULT CgStreamerDlg::OnDataReceived(WPARAM wParam, LPARAM lParam)
+{
+	UpdateData(FALSE);
 	return 0;
 }
