@@ -84,7 +84,6 @@ public:
 	afx_msg void OnBnClickedLogClearButton();
 	afx_msg void OnBnClickedStartButton();
 	CWinThread *m_pThread;
-	static UINT Xfer(LPVOID pParam);
 	int m_nQueueSize;
 	afx_msg void OnCbnSelchangeQueueCombo();
 	int m_nPPX;
@@ -113,8 +112,6 @@ public:
 	static int GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info);
 	static BYTE sync[4];
 	void adjustQueueSize();
-	static UINT XferBulkOut(LPVOID pParam);
-	static UINT XferBulkIn(LPVOID pParam);
 	static UINT XferBulk(LPVOID pParam);
 	CXferBulk *m_pXfer;
 };
