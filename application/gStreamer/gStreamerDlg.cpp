@@ -757,6 +757,8 @@ LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 
 void CgStreamerDlg::terminateThread()
 {
+	if (!m_pXfer) return;
+
 	L(_T("Xfer thread terminating..."));
 	m_bStart = FALSE;
 	m_pXfer->m_bStart = m_bStart;
