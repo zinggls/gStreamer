@@ -79,6 +79,7 @@ int CXferBulkIn::process()
 			}
 
 			if (i == (m_nQueueSize - 1)) {	//큐의 맨마지막 요소
+				stats();
 				if (!m_bStart) break;	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
 			}
 		}

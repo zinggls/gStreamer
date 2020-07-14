@@ -16,6 +16,7 @@ public:
 	virtual int process() = 0;
 	virtual void close();
 	void sendEvent();
+	void stats();
 
 public:
 	CCyUSBEndPoint *m_pEndPt;

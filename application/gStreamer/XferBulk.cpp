@@ -64,3 +64,10 @@ void CXferBulk::sendEvent()
 {
 	for (int i = 0; i < m_nQueueSize; i++) SetEvent(m_ovLap[i].hEvent);
 }
+
+void CXferBulk::stats()
+{
+	clock_t curTime = clock();
+	double elapsed = ((double)(curTime - *m_pStartTime)) / CLOCKS_PER_SEC;
+	*m_pCurKBps = ((double)(*m_pUlBytesTransferred) / elapsed) / 1024.;
+}
