@@ -13,26 +13,29 @@ public:
 	virtual ~CXferBulk();
 
 	virtual int open();
-	virtual int process()=0;
+	virtual int process() = 0;
 	virtual void close();
 	void sendEvent();
 
+public:
 	CCyUSBEndPoint *m_pEndPt;
-	ULONG m_uLen;
 	int m_nPPX;
-	PUCHAR	*m_buffers;
-	PUCHAR	*m_contexts;
 	int m_nQueueSize;
-	OVERLAPPED	m_ovLap[MAX_QUEUE_SIZE];
 	ULONGLONG m_ulSuccessCount;
 	ULONGLONG m_ulFailureCount;
 	ULONGLONG m_ulBeginDataXferErrCount;
 	ULONGLONG m_ulBytesTransferred;
 	clock_t m_startTime;
 	double m_curKBps;
-	CFile *m_pFile;
 	FILEINFO m_fileInfo;
-	static BYTE sync[4];
 	BOOL m_bStart;
 	HWND m_hWnd;
+	static BYTE sync[4];
+
+protected:
+	ULONG m_uLen;
+	PUCHAR	*m_buffers;
+	PUCHAR	*m_contexts;
+	OVERLAPPED	m_ovLap[MAX_QUEUE_SIZE];
+	CFile *m_pFile;
 };
