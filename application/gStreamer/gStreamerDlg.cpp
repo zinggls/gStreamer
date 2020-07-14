@@ -737,6 +737,7 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 
 LRESULT CgStreamerDlg::OnThreadTerminated(WPARAM wParam, LPARAM lParam)
 {
+	m_bStart = FALSE;
 	m_curKBps = 0.0;
 	m_startButton.SetWindowTextW(_T("Start"));
 	GetDlgItem(IDC_DEVICE_COMBO)->EnableWindow(TRUE);
