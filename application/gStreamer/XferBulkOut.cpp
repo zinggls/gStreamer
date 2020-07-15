@@ -106,6 +106,13 @@ void CXferBulkOut::processFile(CFile *pFile)
 		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 	}
 
+#ifdef DEBUG
+	CFile dump;
+	dump.Open(_T("BulkOut_header+body_")+pFile->GetFileName(), CFile::modeCreate | CFile::modeWrite);
+	CFile dumpBody;
+	dumpBody.Open(_T("BulkOut_body_") + pFile->GetFileName(), CFile::modeCreate | CFile::modeWrite);
+#endif
+	BOOL bFirst = TRUE;
 	LONG rLen;
 	while (m_bStart) {
 		for (int i = 0; i < m_nQueueSize; i++) {
@@ -116,6 +123,15 @@ void CXferBulkOut::processFile(CFile *pFile)
 				(*m_pUlBytesTransferred) += rLen;
 				ASSERT(m_hWnd != NULL);
 				::PostMessage(m_hWnd, WM_DATA_SENT, 0, 0);
+#ifdef DEBUG
+				dump.Write(m_buffers[i], rLen);
+				if (bFirst) {
+					bFirst = FALSE;
+				}
+				else {
+					dumpBody.Write(m_buffers[i], rLen);
+				}
+#endif
 				TRACE("%S, %dbytes sent\n", pFile->GetFileName().GetBuffer(), *m_pUlBytesTransferred);
 			}
 			else {
@@ -148,6 +164,10 @@ void CXferBulkOut::processFile(CFile *pFile)
 			}
 		}
 	}
+#ifdef DEBUG
+	dumpBody.Close();
+	dump.Close();
+#endif
 
 	for (int i = 0; i < m_nQueueSize; i++) {
 		if (pFile == NULL) m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i]);
