@@ -106,12 +106,6 @@ public:
 	CButton m_fileSelectBtn;
 	afx_msg void OnBnClickedFileSelectButton();
 	CString m_strFileName;
-	static BOOL fullRead(CFile *pFile, UCHAR *buffer, UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd);
-	static CFile* GetFile(CString pathFileName, FILEINFO &fileInfo);
-	static int SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
-	static UINT Read(CFile *pFile, UCHAR *buffer, UINT nCount);
-	static int GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info);
-	static BYTE sync[4];
 	void adjustQueueSize();
 	static UINT XferBulk(LPVOID pParam);
 	CXferBulk *m_pXfer;

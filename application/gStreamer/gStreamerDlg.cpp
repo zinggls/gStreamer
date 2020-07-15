@@ -52,8 +52,6 @@ END_MESSAGE_MAP()
 
 // CgStreamerDlg 대화 상자
 
-BYTE CgStreamerDlg::sync[4] = { 0x07,0x3a,0xb6,0x99 };	//내맘대로 임의로 정한 sync코드 (앞의 세자리는 ETI싱크임)
-
 CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0), m_nPPX(0)
 	, m_ulSuccessCount(0)
@@ -675,68 +673,6 @@ LRESULT CgStreamerDlg::OnEndOfFile(WPARAM wParam, LPARAM lParam)
 {
 	L(_T("End of file reached"));
 	return 0;
-}
-
-BOOL CgStreamerDlg::fullRead(CFile *pFile, UCHAR *buffer,UINT nCount, BOOL bSeekToBegin, BOOL bPostEofMsg, HWND hWnd)
-{
-	memset(buffer, 0, nCount);	//버퍼는 nCount까지 모두 0으로 초기화한다. nCount까지 못읽는 경우 나머지 공간은 0으로 채워진다
-	UINT read = pFile->Read(buffer, nCount);	//BULK OUT인 경우 파일로 부터 읽는다
-	if (read < nCount) {
-		if (bPostEofMsg) ::PostMessage(hWnd, WM_END_OF_FILE,0,0);
-		if (bSeekToBegin) {
-			pFile->SeekToBegin();
-			return TRUE;
-		}
-		return FALSE;
-	}
-	return TRUE;
-}
-
-UINT CgStreamerDlg::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
-{
-	memset(buffer, 0, nCount);	//버퍼는 nCount까지 모두 0으로 초기화한다. nCount까지 못읽는 경우 나머지 공간은 0으로 채워진다
-	return pFile->Read(buffer, nCount);	//BULK OUT인 경우 파일로 부터 읽는다
-}
-
-CFile* CgStreamerDlg::GetFile(CString pathFileName, FILEINFO &fileInfo)
-{
-	CFile *pFile = NULL;
-	if (!pathFileName.IsEmpty()) {
-		pFile = new CFile(pathFileName, CFile::modeRead | CFile::typeBinary);
-
-		CString name = PathFindFileName(pathFileName.GetBuffer());
-		memset(fileInfo.name_, 0, sizeof(fileInfo.name_));
-		fileInfo.nameSize_ = name.GetLength() * sizeof(TCHAR);
-		memcpy(fileInfo.name_, name.GetBuffer(), fileInfo.nameSize_);
-		fileInfo.size_ = GetFileSize(pFile->m_hFile, NULL);
-
-		TRACE("fileName=%S(%d), size=%dbyte\n", fileInfo.name_, fileInfo.nameSize_, fileInfo.size_);
-	}
-	return pFile;
-}
-
-int CgStreamerDlg::SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info)
-{
-	int nOffset = 0;
-	memcpy(buffer + nOffset, sync, syncSize); nOffset += syncSize;
-	memcpy(buffer + nOffset, &info.nameSize_, sizeof(int)); nOffset += sizeof(int);
-	memcpy(buffer + nOffset, info.name_, info.nameSize_); nOffset += info.nameSize_;
-	memcpy(buffer + nOffset, &info.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
-
-	ASSERT((ULONG)nOffset <= bufferSize);	//len보다 작거나 같다는 가정
-	return nOffset;
-}
-
-int CgStreamerDlg::GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info)
-{
-	int nOffset = syncSize;
-	memset(info.name_, 0, sizeof(FILEINFO::name_));
-	memcpy(&info.nameSize_, buffer + nOffset, sizeof(int)); nOffset += sizeof(int);
-	memcpy(info.name_, buffer + nOffset, info.nameSize_); nOffset += info.nameSize_;
-	memcpy(&info.size_, buffer + nOffset, sizeof(DWORD)); nOffset += sizeof(DWORD);
-
-	ASSERT((ULONG)nOffset <= bufferSize);	//len보다 작거나 같다는 가정
-	return nOffset;
 }
 
 LRESULT CgStreamerDlg::OnSyncFound(WPARAM wParam, LPARAM lParam)
