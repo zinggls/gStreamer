@@ -794,7 +794,7 @@ UINT CgStreamerDlg::XferBulk(LPVOID pParam)
 		pDlg->m_pXfer = new CXferBulkIn();
 	} else {
 		CXferBulkOut *pBulkOut = new CXferBulkOut();
-		pBulkOut->m_strFileName = pDlg->m_strFileName;
+		pBulkOut->m_pFileList = &pDlg->m_fileList;
 		pDlg->m_pXfer = pBulkOut;
 	}
 

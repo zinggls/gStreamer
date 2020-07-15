@@ -17,68 +17,23 @@ int CXferBulkOut::open()
 {
 	CXferBulk::open();
 	ASSERT(m_pEndPt->bIn == FALSE);
-
-	if (!m_strFileName.IsEmpty()) {
-		m_pFile = GetFile(m_strFileName, m_fileInfo);
-		ASSERT(m_pFile);
-	}
+	ASSERT(m_pFileList);
 	return 0;
 }
 
 int CXferBulkOut::process()
 {
-	for (int i = 0; i < m_nQueueSize; i++) {
-		if (m_pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
-			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
-				SetFileInfo(m_buffers[i], m_uLen, sync, sizeof(sync), m_fileInfo);
-			}
-			else {
-				UINT nRead = Read(m_pFile, m_buffers[i], m_uLen);
-				ASSERT(nRead>0);	//큐잉과정에서 Read가 0이 나오지 않아야 한다. 스레드 시작전 adjustQueueSize()에서 큐사이즈를 조절하여 이 문제를 피한다
-			}
-		}
-		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
+	if (m_pFileList->GetCount() == 0) {
+		processFile(NULL);
 	}
-
-	LONG rLen;
-	while (m_bStart) {
-		for (int i = 0; i < m_nQueueSize; i++) {
-			m_pEndPt->WaitForXfer(&m_ovLap[i], INFINITE);
-
-			if (m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i])) {
-				(*m_pUlSuccessCount)++;
-				(*m_pUlBytesTransferred) += rLen;
-				ASSERT(m_hWnd != NULL);
-				::PostMessage(m_hWnd, WM_DATA_SENT, 0, 0);
-			} else {
-				(*m_pUlFailureCount)++;
-			}
-
-			if (m_pFile) {
-				if (Read(m_pFile, m_buffers[i], m_uLen) > 0) {
-					m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-					if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
-				}
-				else {
-					//EOF이면 더이상 읽을 필요없고 따라서 BeginDataXfer를 호출할 필요도 없다
-				}
-			}
-			else {
-				m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-				if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
-			}
-
-			if (m_fileInfo.size_>0 && (*m_pUlBytesTransferred >= (m_fileInfo.size_ + m_uLen))) {
-				m_bStart = FALSE;
-				m_pFile->Close();
-				break;
-			}
-
-			if (i == (m_nQueueSize - 1)) {	//큐의 맨마지막 요소
-				stats();
-				if (!m_bStart) break;	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
-			}
+	else {
+		POSITION pos = m_pFileList->GetHeadPosition();
+		while (pos) {
+			CString strPathName = m_pFileList->GetNext(pos);
+			CFile *pFile = GetFile(strPathName, m_fileInfo);
+			ASSERT(pFile);
+			processFile(pFile);
+			delete pFile;
 		}
 	}
 	return 0;
@@ -86,10 +41,8 @@ int CXferBulkOut::process()
 
 void CXferBulkOut::close()
 {
-	LONG rLen;
 	for (int i = 0; i < m_nQueueSize; i++) {
-		if (m_pFile == NULL) m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i]);
-		delete [] m_buffers[i];
+		delete[] m_buffers[i];
 	}
 	CXferBulk::close();
 }
@@ -127,4 +80,67 @@ UINT CXferBulkOut::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
 {
 	memset(buffer, 0, nCount);	//버퍼는 nCount까지 모두 0으로 초기화한다. nCount까지 못읽는 경우 나머지 공간은 0으로 채워진다
 	return pFile->Read(buffer, nCount);	//BULK OUT인 경우 파일로 부터 읽는다
+}
+
+void CXferBulkOut::processFile(CFile *pFile)
+{
+	for (int i = 0; i < m_nQueueSize; i++) {
+		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
+			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
+				SetFileInfo(m_buffers[i], m_uLen, sync, sizeof(sync), m_fileInfo);
+			}
+			else {
+				UINT nRead = Read(pFile, m_buffers[i], m_uLen);
+				ASSERT(nRead>0);	//큐잉과정에서 Read가 0이 나오지 않아야 한다. 스레드 시작전 adjustQueueSize()에서 큐사이즈를 조절하여 이 문제를 피한다
+			}
+		}
+		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
+		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
+	}
+
+	LONG rLen;
+	while (m_bStart) {
+		for (int i = 0; i < m_nQueueSize; i++) {
+			m_pEndPt->WaitForXfer(&m_ovLap[i], INFINITE);
+
+			if (m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i])) {
+				(*m_pUlSuccessCount)++;
+				(*m_pUlBytesTransferred) += rLen;
+				ASSERT(m_hWnd != NULL);
+				::PostMessage(m_hWnd, WM_DATA_SENT, 0, 0);
+			}
+			else {
+				(*m_pUlFailureCount)++;
+			}
+
+			if (pFile) {
+				if (Read(pFile, m_buffers[i], m_uLen) > 0) {
+					m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
+					if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
+				}
+				else {
+					//EOF이면 더이상 읽을 필요없고 따라서 BeginDataXfer를 호출할 필요도 없다
+				}
+			}
+			else {
+				m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
+				if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
+			}
+
+			if (m_fileInfo.size_>0 && (*m_pUlBytesTransferred >= (m_fileInfo.size_ + m_uLen))) {
+				m_bStart = FALSE;
+				pFile->Close();
+				break;
+			}
+
+			if (i == (m_nQueueSize - 1)) {	//큐의 맨마지막 요소
+				stats();
+				if (!m_bStart) break;	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
+			}
+		}
+	}
+
+	for (int i = 0; i < m_nQueueSize; i++) {
+		if (pFile == NULL) m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i]);
+	}
 }

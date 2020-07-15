@@ -10,10 +10,11 @@ public:
 	virtual int open();
 	virtual int process();
 	virtual void close();
+	void processFile(CFile *pFile);
 
 	static CFile* GetFile(CString pathFileName, FILEINFO &fileInfo);
 	static int SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
 	static UINT Read(CFile *pFile, UCHAR *buffer, UINT nCount);
 
-	CString m_strFileName;
+	CList<CString> *m_pFileList;
 };
