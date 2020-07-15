@@ -651,10 +651,18 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 	ASSERT(m_pEndPt->bIn == FALSE);		//BULK OUT경우에만 파일을 선택할수 있다.
 
 	TCHAR szFilter[] = _T("All Files(*.*)|*.*||");
-	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
+	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, szFilter);
 	if (IDOK == dlg.DoModal()) {
-		m_strFileName = dlg.GetPathName();
-		L(_T("File read from:%s"), m_strFileName);
+		m_fileList.RemoveAll();
+		UINT nCount = 1;
+		POSITION pos = dlg.GetStartPosition();
+		while (pos != NULL) {
+			CString str = dlg.GetNextPathName(pos);
+			m_fileList.AddTail(str);
+			L(_T("[%d] File read from: %s"), nCount,str);
+			nCount++;
+		}
+		m_strFileName = m_fileList.GetAt(m_fileList.GetHeadPosition());
 	}else{
 		m_strFileName.Empty();
 	}

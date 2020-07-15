@@ -114,4 +114,5 @@ public:
 	void adjustQueueSize();
 	static UINT XferBulk(LPVOID pParam);
 	CXferBulk *m_pXfer;
+	CList<CString> m_fileList;
 };
