@@ -103,6 +103,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_FILE_RECEIVED, &CgStreamerDlg::OnFileReceived)
 	ON_MESSAGE(WM_DATA_SENT, &CgStreamerDlg::OnDataSent)
 	ON_MESSAGE(WM_DATA_RECEIVED, &CgStreamerDlg::OnDataReceived)
+	ON_MESSAGE(WM_FILE_SENT, &CgStreamerDlg::OnFileSent)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
@@ -827,5 +828,13 @@ LRESULT CgStreamerDlg::OnDataSent(WPARAM wParam, LPARAM lParam)
 
 LRESULT CgStreamerDlg::OnDataReceived(WPARAM wParam, LPARAM lParam)
 {
+	return 0;
+}
+
+LRESULT CgStreamerDlg::OnFileSent(WPARAM wParam, LPARAM lParam)
+{
+	int nIndex = (int)wParam;
+	CString strPathName = m_fileList.GetAt(m_fileList.FindIndex(nIndex));
+	L(strPathName+_T(" sent"));
 	return 0;
 }

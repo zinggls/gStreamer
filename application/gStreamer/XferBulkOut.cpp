@@ -27,14 +27,14 @@ int CXferBulkOut::process()
 		processFile(NULL);
 	}
 	else {
-		POSITION pos = m_pFileList->GetHeadPosition();
-		while (pos) {
+		for (int i = 0; i < m_pFileList->GetCount(); i++) {
 			m_bStart = TRUE;
-			CString strPathName = m_pFileList->GetNext(pos);
+			CString strPathName = m_pFileList->GetAt(m_pFileList->FindIndex(i));
 			CFile *pFile = GetFile(strPathName, m_fileInfo);
 			ASSERT(pFile);
 			processFile(pFile);
 			delete pFile;
+			::PostMessage(m_hWnd, WM_FILE_SENT, i, 0);
 		}
 	}
 	return 0;
