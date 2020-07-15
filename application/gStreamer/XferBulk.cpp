@@ -55,9 +55,6 @@ void CXferBulk::close()
 	delete m_pFile;
 	delete[] m_contexts;
 	delete[] m_buffers;
-
-	ASSERT(m_hWnd != NULL);
-	::PostMessage(m_hWnd, WM_THREAD_TERMINATED, 0, 0);
 }
 
 void CXferBulk::sendEvent()

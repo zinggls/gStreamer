@@ -816,6 +816,7 @@ UINT CgStreamerDlg::XferBulk(LPVOID pParam)
 	pDlg->m_pXfer->close();
 
 	delete pDlg->m_pXfer;
+	pDlg->PostMessage(WM_THREAD_TERMINATED);
 	return 0;
 }
 
