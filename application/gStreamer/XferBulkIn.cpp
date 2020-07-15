@@ -49,15 +49,13 @@ int CXferBulkIn::process()
 					bInitFrame = FALSE;
 				}
 				else {
-					if ((receivedFileSize + rLen) <= m_fileInfo.size_) {
-						if (m_pFile) {
+					if (m_pFile) {
+						if ((receivedFileSize + rLen) <= m_fileInfo.size_) {
 							m_pFile->Write(m_buffers[i], rLen);
 							receivedFileSize += rLen;
 						}
-					}
-					else {
-						UINT size = m_fileInfo.size_ - receivedFileSize;
-						if (m_pFile) {
+						else {
+							UINT size = m_fileInfo.size_ - receivedFileSize;
 							m_pFile->Write(m_buffers[i], size);
 							receivedFileSize += size;
 						}
