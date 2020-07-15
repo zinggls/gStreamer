@@ -770,7 +770,9 @@ LRESULT CgStreamerDlg::OnDataReceived(WPARAM wParam, LPARAM lParam)
 LRESULT CgStreamerDlg::OnFileSent(WPARAM wParam, LPARAM lParam)
 {
 	int nIndex = (int)wParam;
-	CString strPathName = m_fileList.GetAt(m_fileList.FindIndex(nIndex));
-	L(strPathName+_T(" sent"));
+	CString str;
+	str.Format(_T("[%d] "), nIndex);
+	str += m_fileList.GetAt(m_fileList.FindIndex(nIndex));
+	L(str+_T(" sent"));
 	return 0;
 }
