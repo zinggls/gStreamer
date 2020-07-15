@@ -102,6 +102,8 @@ int CXferBulkIn::GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILE
 {
 	int nOffset = syncSize;
 	memset(info.name_, 0, sizeof(FILEINFO::name_));
+	memcpy(&info.index_, buffer + nOffset, sizeof(int)); nOffset += sizeof(int);
+	memcpy(&info.files_, buffer + nOffset, sizeof(int)); nOffset += sizeof(int);
 	memcpy(&info.nameSize_, buffer + nOffset, sizeof(int)); nOffset += sizeof(int);
 	memcpy(info.name_, buffer + nOffset, info.nameSize_); nOffset += info.nameSize_;
 	memcpy(&info.size_, buffer + nOffset, sizeof(DWORD)); nOffset += sizeof(DWORD);

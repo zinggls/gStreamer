@@ -27,9 +27,14 @@ int CXferBulkOut::process()
 		processFile(NULL);
 	}
 	else {
-		for (int i = 0; i < m_pFileList->GetCount(); i++) {
+		int nMaxFiles = m_pFileList->GetCount();
+		ASSERT(nMaxFiles > 0);
+
+		for (int i = 0; i < nMaxFiles; i++) {
 			m_bStart = TRUE;
 			CString strPathName = m_pFileList->GetAt(m_pFileList->FindIndex(i));
+			m_fileInfo.index_ = i;
+			m_fileInfo.files_ = nMaxFiles;
 			CFile *pFile = GetFile(strPathName, m_fileInfo);
 			ASSERT(pFile);
 			processFile(pFile);
@@ -60,7 +65,7 @@ CFile* CXferBulkOut::GetFile(CString pathFileName, FILEINFO &fileInfo)
 		memcpy(fileInfo.name_, name.GetBuffer(), fileInfo.nameSize_);
 		fileInfo.size_ = GetFileSize(pFile->m_hFile, NULL);
 
-		TRACE("fileName=%S(%d), size=%dbyte\n", fileInfo.name_, fileInfo.nameSize_, fileInfo.size_);
+		TRACE("[%d] total files=%d, fileName=%S(%d), size=%dbyte\n", fileInfo.index_, fileInfo.files_, fileInfo.name_, fileInfo.nameSize_, fileInfo.size_);
 	}
 	return pFile;
 }
@@ -69,6 +74,8 @@ int CXferBulkOut::SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int s
 {
 	int nOffset = 0;
 	memcpy(buffer + nOffset, sync, syncSize); nOffset += syncSize;
+	memcpy(buffer + nOffset, &info.index_, sizeof(int)); nOffset += sizeof(int);
+	memcpy(buffer + nOffset, &info.files_, sizeof(int)); nOffset += sizeof(int);
 	memcpy(buffer + nOffset, &info.nameSize_, sizeof(int)); nOffset += sizeof(int);
 	memcpy(buffer + nOffset, info.name_, info.nameSize_); nOffset += info.nameSize_;
 	memcpy(buffer + nOffset, &info.size_, sizeof(DWORD)); nOffset += sizeof(DWORD);
