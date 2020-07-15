@@ -29,6 +29,7 @@ int CXferBulkOut::process()
 	else {
 		POSITION pos = m_pFileList->GetHeadPosition();
 		while (pos) {
+			m_bStart = TRUE;
 			CString strPathName = m_pFileList->GetNext(pos);
 			CFile *pFile = GetFile(strPathName, m_fileInfo);
 			ASSERT(pFile);
@@ -108,6 +109,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 				(*m_pUlBytesTransferred) += rLen;
 				ASSERT(m_hWnd != NULL);
 				::PostMessage(m_hWnd, WM_DATA_SENT, 0, 0);
+				TRACE("%S, %dbytes sent\n", pFile->GetFileName().GetBuffer(), *m_pUlBytesTransferred);
 			}
 			else {
 				(*m_pUlFailureCount)++;
