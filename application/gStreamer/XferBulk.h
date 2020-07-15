@@ -17,6 +17,7 @@ public:
 	virtual void close();
 	void sendEvent();
 	void stats();
+	void initVariables();
 
 public:
 	CCyUSBEndPoint *m_pEndPt;

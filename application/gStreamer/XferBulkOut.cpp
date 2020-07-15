@@ -92,6 +92,7 @@ UINT CXferBulkOut::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
 
 void CXferBulkOut::processFile(CFile *pFile)
 {
+	initVariables();
 	for (int i = 0; i < m_nQueueSize; i++) {
 		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
 			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.

@@ -44,9 +44,6 @@ int CXferBulk::open()
 	ASSERT(m_pUlBytesTransferred);
 	ASSERT(m_pCurKBps);
 	ASSERT(m_pStartTime);
-	*m_pUlSuccessCount = *m_pUlFailureCount = *m_pUlBeginDataXferErrCount = *m_pUlBytesTransferred = 0;
-	*m_pCurKBps = 0.0;
-	*m_pStartTime = clock();
 	return 0;
 }
 
@@ -67,4 +64,11 @@ void CXferBulk::stats()
 	clock_t curTime = clock();
 	double elapsed = ((double)(curTime - *m_pStartTime)) / CLOCKS_PER_SEC;
 	*m_pCurKBps = ((double)(*m_pUlBytesTransferred) / elapsed) / 1024.;
+}
+
+void CXferBulk::initVariables()
+{
+	*m_pUlSuccessCount = *m_pUlFailureCount = *m_pUlBeginDataXferErrCount = *m_pUlBytesTransferred = 0;
+	*m_pCurKBps = 0.0;
+	*m_pStartTime = clock();
 }
