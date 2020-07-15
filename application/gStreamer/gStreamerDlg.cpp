@@ -664,6 +664,7 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 		}
 		m_strFileName = m_fileList.GetAt(m_fileList.GetHeadPosition());
 	}else{
+		m_fileList.RemoveAll();
 		m_strFileName.Empty();
 	}
 	UpdateData(FALSE);
