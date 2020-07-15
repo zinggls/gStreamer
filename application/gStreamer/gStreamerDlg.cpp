@@ -648,25 +648,15 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	ASSERT(m_pEndPt);
 	ASSERT(m_pEndPt->Attributes==2);	//편의상 현시점에서는 BULK만 지원하도록 구현, isochronous도 지원해야 함
+	ASSERT(m_pEndPt->bIn == FALSE);		//BULK OUT경우에만 파일을 선택할수 있다.
 
 	TCHAR szFilter[] = _T("All Files(*.*)|*.*||");
-	if (m_pEndPt->bIn) {
-		CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
-		if (IDOK == dlg.DoModal()) {
-			m_strFileName = dlg.GetPathName();
-			L(_T("File save to:%s"), m_strFileName);
-		}else{
-			m_strFileName.Empty();
-		}
-	}
-	else {
-		CFileDialog dlg(FALSE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
-		if (IDOK == dlg.DoModal()) {
-			m_strFileName = dlg.GetPathName();
-			L(_T("File read from:%s"), m_strFileName);
-		}else{
-			m_strFileName.Empty();
-		}
+	CFileDialog dlg(FALSE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
+	if (IDOK == dlg.DoModal()) {
+		m_strFileName = dlg.GetPathName();
+		L(_T("File read from:%s"), m_strFileName);
+	}else{
+		m_strFileName.Empty();
 	}
 	UpdateData(FALSE);
 }
