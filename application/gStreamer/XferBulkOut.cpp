@@ -86,7 +86,7 @@ int CXferBulkOut::SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int s
 
 UINT CXferBulkOut::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
 {
-	memset(buffer, 0, nCount);	//버퍼는 nCount까지 모두 0으로 초기화한다. nCount까지 못읽는 경우 나머지 공간은 0으로 채워진다
+	memset(buffer, 0xEF, nCount);	//버퍼는 nCount까지 모두 0으로 초기화한다. nCount까지 못읽는 경우 나머지 공간은 0으로 채워진다
 	return pFile->Read(buffer, nCount);	//BULK OUT인 경우 파일로 부터 읽는다
 }
 
