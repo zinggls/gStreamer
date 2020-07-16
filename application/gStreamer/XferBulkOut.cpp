@@ -93,7 +93,10 @@ UINT CXferBulkOut::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
 void CXferBulkOut::processFile(CFile *pFile)
 {
 	initVariables();
-	for (int i = 0; i < m_nQueueSize; i++) {
+
+	ASSERT(pFile);
+	int nQueueSize = adjustQueueSize(pFile);
+	for (int i = 0; i < nQueueSize; i++) {
 		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
 			if (i == 0) {	//파일명크기,파일명,파일사이즈를 보냄, 이들 크기는 len이하의 크기로 가정 한다. 그래서 i=0인 경우에만 이런 메타정보가 모두 실린다고 가정.
 				SetFileInfo(m_buffers[i], m_uLen, sync, sizeof(sync), m_fileInfo);
@@ -117,7 +120,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 	BOOL bFirst = TRUE;
 	LONG rLen;
 	while (m_bStart) {
-		for (int i = 0; i < m_nQueueSize; i++) {
+		for (int i = 0; i < nQueueSize; i++) {
 			m_pEndPt->WaitForXfer(&m_ovLap[i], INFINITE);
 
 			if (m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i])) {
@@ -168,7 +171,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 				break;
 			}
 
-			if (i == (m_nQueueSize - 1)) {	//큐의 맨마지막 요소
+			if (i == (nQueueSize - 1)) {	//큐의 맨마지막 요소
 				stats();
 				if (!m_bStart) break;	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
 			}
@@ -179,7 +182,20 @@ void CXferBulkOut::processFile(CFile *pFile)
 	dump.Close();
 #endif
 
-	for (int i = 0; i < m_nQueueSize; i++) {
+	for (int i = 0; i < nQueueSize; i++) {
 		if (pFile == NULL) m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i]);
 	}
+}
+
+int CXferBulkOut::adjustQueueSize(CFile *pFile)
+{
+	DWORD fileSize = GetFileSize(pFile->m_hFile, NULL);
+
+	if (fileSize < (m_uLen*m_nQueueSize)) {
+		//맨처음 큐요소 : 파일사이즈등의 정보 전송, 큐에는 두번째 이후부터 파일로 부터 읽은 데이터가 들어감.
+		//파일 전송의 경우 정상적으로 파일이 수신되려면 전송시 큐는 최소 2개 이상이어야 함
+		//이는 본 프로그램에서 파일을 전송하고 수신하는 규칙을 정의한 것에 따라 생긴 제약임
+		return 2;
+	}
+	return m_nQueueSize;
 }

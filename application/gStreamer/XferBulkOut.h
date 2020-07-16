@@ -11,6 +11,7 @@ public:
 	virtual int process();
 	virtual void close();
 	void processFile(CFile *pFile);
+	int adjustQueueSize(CFile *pFile);
 
 	static CFile* GetFile(CString pathFileName, FILEINFO &fileInfo);
 	static int SetFileInfo(UCHAR *buffer, ULONG bufferSize, BYTE *sync, int syncSize, FILEINFO &info);
