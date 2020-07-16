@@ -112,6 +112,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 	dump.Open(_T("BulkOut_header+body_")+pFile->GetFileName(), CFile::modeCreate | CFile::modeWrite);
 	CFile dumpBody;
 	dumpBody.Open(_T("BulkOut_body_") + pFile->GetFileName(), CFile::modeCreate | CFile::modeWrite);
+	UINT sentFileSize = 0;
 #endif
 	BOOL bFirst = TRUE;
 	LONG rLen;
@@ -130,7 +131,15 @@ void CXferBulkOut::processFile(CFile *pFile)
 					bFirst = FALSE;
 				}
 				else {
-					dumpBody.Write(m_buffers[i], rLen);
+					if ((sentFileSize + rLen) <= m_fileInfo.size_) {
+						dumpBody.Write(m_buffers[i], rLen);
+						sentFileSize += rLen;
+					}
+					else {
+						UINT size = m_fileInfo.size_ - sentFileSize;
+						dumpBody.Write(m_buffers[i], size);
+						sentFileSize += size;
+					}
 				}
 #endif
 				TRACE("%S, %dbytes sent\n", pFile->GetFileName().GetBuffer(), *m_pUlBytesTransferred);
