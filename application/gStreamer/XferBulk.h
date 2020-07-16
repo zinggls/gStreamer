@@ -39,5 +39,4 @@ protected:
 	PUCHAR	*m_buffers;
 	PUCHAR	*m_contexts;
 	OVERLAPPED	m_ovLap[MAX_QUEUE_SIZE];
-	CFile *m_pFile;
 };

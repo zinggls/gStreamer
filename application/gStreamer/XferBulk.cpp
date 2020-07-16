@@ -8,7 +8,7 @@ BYTE CXferBulk::sync[4] = { 0x07,0x3a,0xb6,0x99 };	//내맘대로 임의로 정한 sync코
 CXferBulk::CXferBulk()
 	:m_pEndPt(NULL), m_uLen(0), m_nPPX(0), m_buffers(NULL), m_contexts(NULL), m_nQueueSize(0),
 	m_pUlSuccessCount(NULL), m_pUlFailureCount(NULL), m_pUlBeginDataXferErrCount(NULL), m_pUlBytesTransferred(NULL),
-	m_pCurKBps(NULL), m_pFile(NULL), m_bStart(FALSE), m_hWnd(NULL)
+	m_pCurKBps(NULL), m_bStart(FALSE), m_hWnd(NULL)
 {
 	memset(&m_fileInfo, 0, sizeof(FILEINFO));
 }
@@ -49,7 +49,6 @@ int CXferBulk::open()
 
 void CXferBulk::close()
 {
-	delete m_pFile;
 	delete[] m_contexts;
 	delete[] m_buffers;
 }
