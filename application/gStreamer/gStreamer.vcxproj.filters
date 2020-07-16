@@ -51,6 +51,12 @@
     <ClInclude Include="XferBulk.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="IDataCallback.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BulkInDataProc.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gStreamer.cpp">
@@ -69,6 +75,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="XferBulk.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BulkInDataProc.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

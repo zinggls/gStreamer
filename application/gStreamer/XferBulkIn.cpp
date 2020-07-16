@@ -2,15 +2,17 @@
 #include "XferBulkIn.h"
 #include <CyAPI.h>
 #include "userDefinedMessage.h"
+#include "BulkInDataProc.h"
 
 CXferBulkIn::CXferBulkIn()
+	:m_pDataProc(NULL)
 {
-
+	m_pDataProc = new CBulkInDataProc();
 }
 
 CXferBulkIn::~CXferBulkIn()
 {
-
+	delete m_pDataProc;
 }
 
 int CXferBulkIn::open()
@@ -24,76 +26,39 @@ int CXferBulkIn::process()
 {
 	for (int i = 0; i < m_nQueueSize; i++) {
 		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
+		ASSERT(m_pEndPt->NtStatus == 0 && m_pEndPt->UsbdStatus == 0);
 	}
 
-	UINT receivedFileSize = 0;
-	BOOL bInitFrame = TRUE;
-	LONG rLen;
-	while (m_bStart) {
-		for (int i = 0; i < m_nQueueSize; i++) {
-			m_pEndPt->WaitForXfer(&m_ovLap[i], INFINITE);
+	int i = 0;
+	for (; m_bStart;)
+	{
+		long rLen = m_uLen;
+		bool bRtn = m_pEndPt->WaitForXfer(&m_ovLap[i], INFINITE);
+		ASSERT(bRtn);
 
-			if (m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i])) {
-				(*m_pUlSuccessCount)++;
-				(*m_pUlBytesTransferred) += rLen;
+		bRtn = m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i]);
+		if (bRtn) m_pDataProc->OnData(m_buffers[i],rLen);
 
-				if (bInitFrame && i == 0) {
-					if (memcmp(m_buffers[i], sync, sizeof(sync)) == 0) {
-						GetFileInfo(m_buffers[i], m_uLen, sizeof(sync), m_fileInfo);
-						ASSERT(m_hWnd != NULL);
-						::PostMessage(m_hWnd,WM_SYNC_FOUND, (WPARAM)&m_fileInfo, 0);
-						m_pFile = new CFile(m_fileInfo.name_, CFile::modeCreate | CFile::modeWrite);
-						ASSERT(m_pFile);	// TODO 파일 생성과정에서 NULL이 나올수도 있음
-					}
-					bInitFrame = FALSE;
-				}
-				else {
-					if (m_pFile) {
-						if ((receivedFileSize + rLen) <= m_fileInfo.size_) {
-							m_pFile->Write(m_buffers[i], rLen);
-							receivedFileSize += rLen;
-						}
-						else {
-							UINT size = m_fileInfo.size_ - receivedFileSize;
-							m_pFile->Write(m_buffers[i], size);
-							receivedFileSize += size;
-						}
-					}
-				}
-				ASSERT(m_hWnd != NULL);
-				::PostMessage(m_hWnd, WM_DATA_RECEIVED, 0, 0);
-			}
-			else {
-				(*m_pUlFailureCount)++;
-			}
+		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
+		ASSERT(m_pEndPt->NtStatus == 0 && m_pEndPt->UsbdStatus == 0);
 
-			m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
-			if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
-
-			if (m_fileInfo.size_>0 && (*m_pUlBytesTransferred >= (m_fileInfo.size_ + m_uLen))) {
-				ASSERT(m_hWnd != NULL);
-				::PostMessage(m_hWnd, WM_FILE_RECEIVED, (WPARAM)&m_fileInfo, (LPARAM)*m_pUlBytesTransferred);
-				m_bStart = FALSE;
-				m_pFile->Close();
-				break;
-			}
-
-			if (i == (m_nQueueSize - 1)) {	//큐의 맨마지막 요소
-				stats();
-				if (!m_bStart) break;	//종료 명령(m_bStart==FALSE)이 도착했고, 큐의 맨마지막 요소까지 처리하고 났으면 for루프를 탈출
-			}
+		if (!bRtn) {
+			//블럭상태(WaitForXfer에서 블럭상태)에서 종료를 누르면 블럭을 빠져나오기 위해 sendEvent함수가 호출되고
+			//이때 FinishDataXfer함수는 false를 리턴한다. 이때 루프를 빠져나온다
+			break;
 		}
+		i++;
+		if (i == m_nQueueSize) i = 0;
 	}
 	return 0;
 }
 
 void CXferBulkIn::close()
 {
-	LONG rLen;
+	LONG rLen = m_uLen;
 	for (int i = 0; i < m_nQueueSize; i++) {
 		m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i]);
-		delete[] m_buffers[i];
+		delete [] m_buffers[i];
 	}
 	CXferBulk::close();
 }

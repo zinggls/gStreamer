@@ -2,6 +2,8 @@
 
 #include "XferBulk.h"
 
+class CBulkInDataProc;
+
 class CXferBulkIn : public CXferBulk {
 public:
 	CXferBulkIn();
@@ -12,4 +14,5 @@ public:
 	virtual void close();
 
 	static int GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info);
+	CBulkInDataProc *m_pDataProc;
 };

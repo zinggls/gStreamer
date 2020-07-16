@@ -207,6 +207,7 @@
   <ItemGroup>
     <ClInclude Include="gStreamer.h" />
     <ClInclude Include="gStreamerDlg.h" />
+    <ClInclude Include="IDataCallback.h" />
     <ClInclude Include="IXfer.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -216,6 +217,7 @@
     <ClInclude Include="XferBulkIn.h" />
     <ClInclude Include="XferBulkOut.h" />
     <ClInclude Include="fileInfo.h" />
+    <ClInclude Include="BulkInDataProc.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="gStreamer.cpp" />
@@ -229,6 +231,7 @@
     <ClCompile Include="XferBulk.cpp" />
     <ClCompile Include="XferBulkIn.cpp" />
     <ClCompile Include="XferBulkOut.cpp" />
+    <ClCompile Include="BulkInDataProc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="gStreamer.rc" />
