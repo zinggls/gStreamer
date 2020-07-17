@@ -240,6 +240,7 @@
     <None Include="res\gStreamer.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\..\..\Desktop\Z.ico" />
     <Image Include="res\gStreamer.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
