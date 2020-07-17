@@ -28,6 +28,8 @@ int CXferBulkIn::open()
 
 int CXferBulkIn::process()
 {
+	initVariables();
+
 	for (int i = 0; i < m_nQueueSize; i++) {
 		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
 		ASSERT(m_pEndPt->NtStatus == 0 && m_pEndPt->UsbdStatus == 0);
@@ -59,7 +61,10 @@ int CXferBulkIn::process()
 			break;
 		}
 		i++;
-		if (i == m_nQueueSize) i = 0;
+		if (i == m_nQueueSize) {
+			stats();
+			i = 0;
+		}
 	}
 	return 0;
 }
