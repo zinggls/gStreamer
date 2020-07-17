@@ -47,6 +47,7 @@ int CXferBulkIn::process()
 			(*m_pUlSuccessCount)++;
 			(*m_pUlBytesTransferred) += rLen;
 			m_pDataProc->OnData(m_buffers[i], rLen);
+			TRACE("%dbytes received\n", *m_pUlBytesTransferred);
 		}
 		else {
 			if(m_bStart) (*m_pUlFailureCount)++;
