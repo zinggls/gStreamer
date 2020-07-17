@@ -49,7 +49,7 @@ int CXferBulkIn::process()
 			m_pDataProc->OnData(m_buffers[i], rLen);
 		}
 		else {
-			(*m_pUlFailureCount)++;
+			if(m_bStart) (*m_pUlFailureCount)++;
 		}
 
 		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
