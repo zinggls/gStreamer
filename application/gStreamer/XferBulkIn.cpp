@@ -19,6 +19,7 @@ int CXferBulkIn::open()
 {
 	CXferBulk::open();
 	ASSERT(m_pEndPt->bIn == TRUE);
+	m_pDataProc->m_nLen = m_uLen;
 	return 0;
 }
 
@@ -37,7 +38,14 @@ int CXferBulkIn::process()
 		ASSERT(bRtn);
 
 		bRtn = m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i]);
-		if (bRtn) m_pDataProc->OnData(m_buffers[i],rLen);
+		if (bRtn) {
+			(*m_pUlSuccessCount)++;
+			(*m_pUlBytesTransferred) += rLen;
+			m_pDataProc->OnData(m_buffers[i], rLen);
+		}
+		else {
+			(*m_pUlFailureCount)++;
+		}
 
 		m_contexts[i] = m_pEndPt->BeginDataXfer(m_buffers[i], m_uLen, &m_ovLap[i]);
 		ASSERT(m_pEndPt->NtStatus == 0 && m_pEndPt->UsbdStatus == 0);
