@@ -14,5 +14,7 @@ public:
 	virtual void close();
 
 	static int GetFileInfo(UCHAR *buffer, ULONG bufferSize, int syncSize, FILEINFO &info);
+
+protected:
 	CBulkInDataProc *m_pDataProc;
 };
