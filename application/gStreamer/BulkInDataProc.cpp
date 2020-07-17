@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BulkInDataProc.h"
 #include "XferBulkIn.h"
+#include "userDefinedMessage.h"
 
 CBulkInDataProc::CBulkInDataProc()
 	:m_pDump(NULL), m_nCount(0),m_pFile(NULL), m_nReceivedFileSize(0), m_nLen(0), m_nMaxCount(0), m_hWnd(NULL)
@@ -74,4 +75,7 @@ void CBulkInDataProc::OnEof(PUCHAR buf, LONG len)
 	delete m_pFile;
 	m_pFile = NULL;
 	m_nCount = 0;
+
+	ASSERT(m_hWnd);
+	::PostMessage(m_hWnd, WM_FILE_RECEIVED, (WPARAM)&m_fileInfo, m_nReceivedFileSize);
 }
