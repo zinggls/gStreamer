@@ -3,7 +3,7 @@
 #include "XferBulkIn.h"
 
 CBulkInDataProc::CBulkInDataProc()
-	:m_pDump(NULL), m_nCount(0),m_pFile(NULL), m_nReceivedFileSize(0), m_nLen(0)
+	:m_pDump(NULL), m_nCount(0),m_pFile(NULL), m_nReceivedFileSize(0), m_nLen(0), m_nMaxCount(0), m_hWnd(NULL)
 {
 #ifdef DEBUG
 	m_pDump = new CFile(_T("BulkIn.dump"), CFile::modeCreate | CFile::modeWrite);

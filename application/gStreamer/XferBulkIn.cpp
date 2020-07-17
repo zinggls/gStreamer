@@ -19,7 +19,10 @@ int CXferBulkIn::open()
 {
 	CXferBulk::open();
 	ASSERT(m_pEndPt->bIn == TRUE);
+	ASSERT(m_uLen>0);
+	ASSERT(m_hWnd!=NULL);
 	m_pDataProc->m_nLen = m_uLen;
+	m_pDataProc->m_hWnd = m_hWnd;
 	return 0;
 }
 

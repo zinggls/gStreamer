@@ -23,4 +23,5 @@ public:
 	ULONG m_nReceivedFileSize;
 	ULONG m_nLen;
 	ULONG m_nMaxCount;
+	HWND m_hWnd;
 };
