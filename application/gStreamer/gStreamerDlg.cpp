@@ -261,6 +261,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 	else {
 		L(_T("No device found"));
 		m_startButton.EnableWindow(FALSE);
+		return FALSE;
 	}
 	return TRUE;
 }
