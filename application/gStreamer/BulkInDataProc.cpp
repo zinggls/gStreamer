@@ -77,5 +77,5 @@ void CBulkInDataProc::OnEof(PUCHAR buf, LONG len)
 	m_nCount = 0;
 
 	ASSERT(m_hWnd);
-	::PostMessage(m_hWnd, WM_FILE_RECEIVED, (WPARAM)&m_fileInfo, m_nReceivedFileSize);
+	::SendMessage(m_hWnd, WM_FILE_RECEIVED, (WPARAM)&m_fileInfo, m_nReceivedFileSize);
 }
