@@ -54,7 +54,7 @@ END_MESSAGE_MAP()
 // CgStreamerDlg 대화 상자
 
 CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0), m_nPPX(0)
+	: CDialogEx(IDD_GSTREAMER_DIALOG, pParent), m_pUsbDev(NULL), m_pEndPt(NULL), m_ppxComboIndex(-1), m_pThread(NULL), m_nQueueSize(0), m_nPPX(0)
 	, m_ulSuccessCount(0)
 	, m_ulFailureCount(0)
 	, m_ulBeginDataXferErrCount(0)
@@ -239,6 +239,7 @@ void CgStreamerDlg::OnDestroy()
 
 BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 {
+	if (m_pUsbDev) delete m_pUsbDev;
 	m_pUsbDev = new CCyUSBDevice(this->m_hWnd, CYUSBDRV_GUID, true);
 	if (m_pUsbDev == NULL) {
 		errMsg = _T("Can't get USB Device instance");
