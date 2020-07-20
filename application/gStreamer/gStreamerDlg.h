@@ -114,4 +114,5 @@ public:
 	BOOL m_bPnP_Arrival;
 	BOOL m_bPnP_Removal;
 	BOOL m_bPnP_DevNodeChange;
+	void ResetEndPoint();
 };

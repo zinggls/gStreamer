@@ -261,6 +261,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		m_deviceCombo.EnableWindow(TRUE);
 	}
 	else {
+		ResetEndPoint();
 		errMsg = _T("No device found");
 		m_startButton.EnableWindow(FALSE);
 		return FALSE;
@@ -279,7 +280,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 
 	int interfaces = m_pUsbDev->AltIntfcCount() + 1;
 
-	m_endpointCombo.ResetContent();
+	ResetEndPoint();
 	for (int i = 0; i < interfaces; i++) {
 		if (m_pUsbDev->SetAltIntfc(i) == true) {
 
@@ -813,4 +814,9 @@ LRESULT CgStreamerDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 		if (wParam == DBT_DEVICEREMOVECOMPLETE) m_bPnP_Removal = TRUE;
 	}
 	return CDialogEx::WindowProc(message, wParam, lParam);
+}
+
+void CgStreamerDlg::ResetEndPoint()
+{
+	m_endpointCombo.ResetContent();
 }
