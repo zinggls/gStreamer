@@ -9,6 +9,7 @@
 #include <CyAPI.h>
 #include "XferBulkIn.h"
 #include "XferBulkOut.h"
+#include <dbt.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -60,6 +61,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_KBps(_T(""))
 	, m_strFileName(_T(""))
 	, m_pXfer(NULL)
+	, m_bPnP_Arrival(FALSE),m_bPnP_Removal(FALSE),m_bPnP_DevNodeChange(FALSE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -259,7 +261,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		m_deviceCombo.EnableWindow(TRUE);
 	}
 	else {
-		L(_T("No device found"));
+		errMsg = _T("No device found");
 		m_startButton.EnableWindow(FALSE);
 		return FALSE;
 	}
@@ -776,4 +778,39 @@ LRESULT CgStreamerDlg::OnFileSent(WPARAM wParam, LPARAM lParam)
 	str += m_fileList.GetAt(m_fileList.FindIndex(nIndex));
 	L(str+_T(" sent"));
 	return 0;
+}
+
+LRESULT CgStreamerDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+	if (message == WM_DEVICECHANGE)
+	{
+		// Tracks DBT_DEVNODES_CHANGED followed by DBT_DEVICEREMOVECOMPLETE
+		if (wParam == DBT_DEVNODES_CHANGED)
+		{
+			m_bPnP_DevNodeChange = TRUE;
+			m_bPnP_Removal = FALSE;
+		}
+
+		// Tracks DBT_DEVICEARRIVAL followed by DBT_DEVNODES_CHANGED
+		if (wParam == DBT_DEVICEARRIVAL)
+		{
+			m_bPnP_Arrival = TRUE;
+			m_bPnP_DevNodeChange = FALSE;
+		}
+
+		CString errMsg;
+		if (m_bPnP_DevNodeChange && m_bPnP_Removal) {
+			m_bPnP_DevNodeChange = m_bPnP_Removal = FALSE;
+			GetStreamerDevice(errMsg) == FALSE ? L(errMsg) : L(_T("streamer device ok"));
+		}
+
+		if (m_bPnP_DevNodeChange && m_bPnP_Arrival) {
+			m_bPnP_DevNodeChange = m_bPnP_Arrival = FALSE;
+			GetStreamerDevice(errMsg) == FALSE ? L(errMsg) : L(_T("streamer device ok"));
+		}
+
+		if (wParam == DBT_DEVICEREMOVECOMPLETE) m_bPnP_Removal = TRUE;
+	}
+	return CDialogEx::WindowProc(message, wParam, lParam);
 }

@@ -110,4 +110,8 @@ public:
 	static UINT XferBulk(LPVOID pParam);
 	CXferBulk *m_pXfer;
 	CList<CString> m_fileList;
+	virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+	BOOL m_bPnP_Arrival;
+	BOOL m_bPnP_Removal;
+	BOOL m_bPnP_DevNodeChange;
 };
