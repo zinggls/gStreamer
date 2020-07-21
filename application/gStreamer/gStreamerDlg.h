@@ -97,7 +97,6 @@ public:
 	CString m_KBps;
 	ULONGLONG m_ulBytesTransferred;
 	clock_t m_startTime;
-	void showStats();
 	double m_curKBps;
 	CStatic m_fileSelect;
 	CButton m_fileSelectBtn;

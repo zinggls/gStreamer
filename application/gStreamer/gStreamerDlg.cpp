@@ -633,16 +633,6 @@ void CgStreamerDlg::terminateThread()
 	if (m_pThread) WaitForSingleObject(m_pThread->m_hThread, INFINITE);
 }
 
-void CgStreamerDlg::showStats()
-{
-	clock_t curTime = clock();
-	double elapsed = ((double)(curTime - m_startTime)) / CLOCKS_PER_SEC;
-	//TRACE("수행 시간 : %f\n", elapsed);
-
-	m_curKBps = ((double)m_ulBytesTransferred / elapsed) / 1024.;
-	m_KBps.Format(_T("%.0f KBps"),m_curKBps);
-}
-
 void CgStreamerDlg::OnBnClickedFileSelectButton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
