@@ -99,7 +99,6 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_WM_TIMER()
 	ON_MESSAGE(WM_THREAD_TERMINATED, &CgStreamerDlg::OnThreadTerminated)
 	ON_MESSAGE(WM_END_OF_FILE, &CgStreamerDlg::OnEndOfFile)
-	ON_MESSAGE(WM_SYNC_FOUND, &CgStreamerDlg::OnSyncFound)
 	ON_MESSAGE(WM_FILE_RECEIVED, &CgStreamerDlg::OnFileReceived)
 	ON_MESSAGE(WM_DATA_SENT, &CgStreamerDlg::OnDataSent)
 	ON_MESSAGE(WM_FILE_SENT, &CgStreamerDlg::OnFileSent)
@@ -686,13 +685,6 @@ LRESULT CgStreamerDlg::OnEndOfFile(WPARAM wParam, LPARAM lParam)
 	return 0;
 }
 
-LRESULT CgStreamerDlg::OnSyncFound(WPARAM wParam, LPARAM lParam)
-{
-	FILEINFO *pFileInfo = (FILEINFO*)wParam;
-	CString name(pFileInfo->name_);
-	L(_T("Sync found,FileName=")+name);
-	return 0;
-}
 
 LRESULT CgStreamerDlg::OnFileReceived(WPARAM wParam, LPARAM lParam)
 {
