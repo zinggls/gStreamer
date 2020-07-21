@@ -50,7 +50,6 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg LRESULT OnThreadTerminated(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnEndOfFile(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnFileReceived(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnDataSent(WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnFileSent(WPARAM wParam, LPARAM lParam);

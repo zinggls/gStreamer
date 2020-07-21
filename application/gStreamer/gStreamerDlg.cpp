@@ -98,7 +98,6 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_QUEUE_COMBO, &CgStreamerDlg::OnCbnSelchangeQueueCombo)
 	ON_WM_TIMER()
 	ON_MESSAGE(WM_THREAD_TERMINATED, &CgStreamerDlg::OnThreadTerminated)
-	ON_MESSAGE(WM_END_OF_FILE, &CgStreamerDlg::OnEndOfFile)
 	ON_MESSAGE(WM_FILE_RECEIVED, &CgStreamerDlg::OnFileReceived)
 	ON_MESSAGE(WM_DATA_SENT, &CgStreamerDlg::OnDataSent)
 	ON_MESSAGE(WM_FILE_SENT, &CgStreamerDlg::OnFileSent)
@@ -678,13 +677,6 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 	}
 	UpdateData(FALSE);
 }
-
-LRESULT CgStreamerDlg::OnEndOfFile(WPARAM wParam, LPARAM lParam)
-{
-	L(_T("End of file reached"));
-	return 0;
-}
-
 
 LRESULT CgStreamerDlg::OnFileReceived(WPARAM wParam, LPARAM lParam)
 {
