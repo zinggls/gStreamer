@@ -23,6 +23,7 @@ int CXferBulkOut::open()
 
 int CXferBulkOut::process()
 {
+	initVariables();
 	if (m_pFileList->GetCount() == 0) {
 		processFile(NULL);
 	}
@@ -38,6 +39,7 @@ int CXferBulkOut::process()
 			CFile *pFile = GetFile(strPathName, m_fileInfo);
 			ASSERT(pFile);
 			processFile(pFile);
+			pFile->Close();
 			delete pFile;
 			::PostMessage(m_hWnd, WM_FILE_SENT, i, 0);
 		}
@@ -92,8 +94,6 @@ UINT CXferBulkOut::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
 
 void CXferBulkOut::processFile(CFile *pFile)
 {
-	initVariables();
-
 	ASSERT(pFile);
 	int nQueueSize = adjustQueueSize(pFile);
 	for (int i = 0; i < nQueueSize; i++) {
@@ -117,6 +117,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 	dumpBody.Open(_T("BulkOut_body_") + pFile->GetFileName(), CFile::modeCreate | CFile::modeWrite);
 	UINT sentFileSize = 0;
 #endif
+	ULONGLONG ulBytesTransferred = 0;
 	BOOL bFirst = TRUE;
 	LONG rLen;
 	while (m_bStart) {
@@ -126,6 +127,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 			if (m_pEndPt->FinishDataXfer(m_buffers[i], rLen, &m_ovLap[i], m_contexts[i])) {
 				(*m_pUlSuccessCount)++;
 				(*m_pUlBytesTransferred) += rLen;
+				ulBytesTransferred += rLen;
 				ASSERT(m_hWnd != NULL);
 				::PostMessage(m_hWnd, WM_DATA_SENT, 0, 0);
 #ifdef BULK_OUT_DEBUG
@@ -165,9 +167,8 @@ void CXferBulkOut::processFile(CFile *pFile)
 				if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 			}
 
-			if (m_fileInfo.size_>0 && (*m_pUlBytesTransferred >= (m_fileInfo.size_ + m_uLen))) {
+			if (m_fileInfo.size_>0 && (ulBytesTransferred >= (m_fileInfo.size_ + m_uLen))) {
 				m_bStart = FALSE;
-				pFile->Close();
 				break;
 			}
 

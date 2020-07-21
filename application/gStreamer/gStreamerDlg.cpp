@@ -101,6 +101,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_FILE_RECEIVED, &CgStreamerDlg::OnFileReceived)
 	ON_MESSAGE(WM_DATA_SENT, &CgStreamerDlg::OnDataSent)
 	ON_MESSAGE(WM_FILE_SENT, &CgStreamerDlg::OnFileSent)
+	ON_MESSAGE(WM_ALL_FILES_RECEIVED, &CgStreamerDlg::OnAllFilesReceived)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
@@ -769,4 +770,21 @@ LRESULT CgStreamerDlg::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 void CgStreamerDlg::ResetEndPoint()
 {
 	m_endpointCombo.ResetContent();
+}
+
+LRESULT CgStreamerDlg::OnAllFilesReceived(WPARAM wParam, LPARAM lParam)
+{
+	ASSERT(wParam);
+
+	//Bulk out에서는 OnThreadTerminated에서 아래의 명령을 실행한다.
+	//Bulk in에서는 Stop버튼을 누르기 전까지는 계속 수신하는 방식이
+	//프로그램을 사용하는데 직관적이고 편리하여
+	//스레드 종료가 아닌 모든 파일을 수신한 시점에 초기화를 한다
+	m_curKBps = 0.0;
+	KillTimer(COUNT_REFRESH_TIMER);
+
+	CString str;
+	str.Format(_T("%d files received"), (int)wParam);
+	L(str);
+	return 0;
 }
