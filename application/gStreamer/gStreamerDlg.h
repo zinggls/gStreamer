@@ -103,7 +103,6 @@ public:
 	CButton m_fileSelectBtn;
 	afx_msg void OnBnClickedFileSelectButton();
 	CString m_strFileName;
-	void adjustQueueSize();
 	static UINT XferBulk(LPVOID pParam);
 	CXferBulk *m_pXfer;
 	CList<CString> m_fileList;
