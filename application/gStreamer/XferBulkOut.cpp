@@ -110,7 +110,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 		if (m_pEndPt->NtStatus || m_pEndPt->UsbdStatus) (*m_pUlBeginDataXferErrCount)++;
 	}
 
-#ifdef DEBUG
+#ifdef BULK_OUT_DEBUG
 	CFile dump;
 	dump.Open(_T("BulkOut_header+body_")+pFile->GetFileName(), CFile::modeCreate | CFile::modeWrite);
 	CFile dumpBody;
@@ -128,7 +128,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 				(*m_pUlBytesTransferred) += rLen;
 				ASSERT(m_hWnd != NULL);
 				::PostMessage(m_hWnd, WM_DATA_SENT, 0, 0);
-#ifdef DEBUG
+#ifdef BULK_OUT_DEBUG
 				dump.Write(m_buffers[i], rLen);
 				if (bFirst) {
 					bFirst = FALSE;
@@ -177,7 +177,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 			}
 		}
 	}
-#ifdef DEBUG
+#ifdef BULK_OUT_DEBUG
 	dumpBody.Close();
 	dump.Close();
 #endif
