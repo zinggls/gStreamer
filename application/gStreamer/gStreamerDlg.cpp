@@ -669,7 +669,7 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 			L(_T("[%d] File read from: %s"), nCount,str);
 			nCount++;
 		}
-		m_strFileName = m_fileList.GetAt(m_fileList.GetHeadPosition());
+		m_strFileName.Format(_T("<<%d>> file(s) selected"),m_fileList.GetCount());
 	}else{
 		m_fileList.RemoveAll();
 		m_strFileName.Empty();
