@@ -102,6 +102,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_DATA_SENT, &CgStreamerDlg::OnDataSent)
 	ON_MESSAGE(WM_FILE_SENT, &CgStreamerDlg::OnFileSent)
 	ON_MESSAGE(WM_ALL_FILES_RECEIVED, &CgStreamerDlg::OnAllFilesReceived)
+	ON_MESSAGE(WM_FIRST_HEADER, &CgStreamerDlg::OnFirstHeader)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
 
@@ -785,6 +786,20 @@ LRESULT CgStreamerDlg::OnAllFilesReceived(WPARAM wParam, LPARAM lParam)
 
 	CString str;
 	str.Format(_T("%d files received"), (int)wParam);
+	L(str);
+	return 0;
+}
+
+LRESULT CgStreamerDlg::OnFirstHeader(WPARAM wParam, LPARAM lParam)
+{
+	ASSERT(wParam);
+
+	//본 함수는 BULK IN인 경우에만 사용되는 함수
+	//마지막 파일을 받고 타이머가 종료된다. 다시 스트림이 도착하는 경우 타이머를 켜줘야 한다.
+	SetTimer(COUNT_REFRESH_TIMER, COUNT_REFRESH_TIMER_INTERVAL, NULL);
+
+	CString str;
+	str.Format(_T("First header of %d files received"), ((FILEINFO*)wParam)->files_);
 	L(str);
 	return 0;
 }

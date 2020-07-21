@@ -55,6 +55,10 @@ CFile* CBulkInDataProc::OnHeader(PUCHAR buf, LONG len)
 	m_nMaxCount = m_fileInfo.size_ / m_nLen;
 	if ((m_fileInfo.size_%m_nLen) != 0) m_nMaxCount++;
 	m_nMaxCount++;	//맨처음 보내지는 헤더를 고려해서 하나를 더함
+
+	if (m_fileInfo.index_==0)
+		::SendMessage(m_hWnd, WM_FIRST_HEADER, (WPARAM)&m_fileInfo, 0);
+
 	return new CFile(m_fileInfo.name_, CFile::modeCreate | CFile::modeWrite);
 }
 
