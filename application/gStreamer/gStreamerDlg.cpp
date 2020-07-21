@@ -656,6 +656,13 @@ void CgStreamerDlg::OnBnClickedFileSelectButton()
 
 	TCHAR szFilter[] = _T("All Files(*.*)|*.*||");
 	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_ALLOWMULTISELECT, szFilter);
+
+	CString fileName;
+	const int c_cMaxFiles = 1024*24;	//24,576
+	const int c_cbBuffSize = ((c_cMaxFiles + 1) * MAX_PATH) + 1;
+	dlg.GetOFN().lpstrFile = fileName.GetBuffer(c_cbBuffSize);
+	dlg.GetOFN().nMaxFile = c_cbBuffSize;
+
 	if (IDOK == dlg.DoModal()) {
 		m_fileList.RemoveAll();
 		UINT nCount = 1;
