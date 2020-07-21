@@ -4,7 +4,7 @@
 #include "userDefinedMessage.h"
 
 CBulkInDataProc::CBulkInDataProc()
-	:m_pDump(NULL), m_nCount(0),m_pFile(NULL), m_nReceivedFileSize(0), m_nLen(0), m_nMaxCount(0), m_hWnd(NULL)
+	:m_pDump(NULL), m_nCount(0),m_pFile(NULL), m_nReceivedFileSize(0), m_nLen(0), m_nMaxCount(0), m_hWnd(NULL), m_bFileStream(FALSE)
 {
 #ifdef BULK_IN_DEBUG
 	m_pDump = new CFile(_T("BulkIn.dump"), CFile::modeCreate | CFile::modeWrite);
@@ -27,15 +27,23 @@ void CBulkInDataProc::OnData(PUCHAR buf, LONG len)
 #endif
 
 	m_nCount++;
-	if (SyncFound(buf, len))
-		m_pFile = OnHeader(buf, len);
-	else {
-		if (m_nCount < m_nMaxCount) {
-			OnBody(buf, len);
-		}
+
+	if (m_nCount == 1) (SyncFound(buf, len)==TRUE)? m_bFileStream = TRUE: m_bFileStream = FALSE;
+
+	if (m_bFileStream) {
+		if (SyncFound(buf, len))
+			m_pFile = OnHeader(buf, len);
 		else {
-			OnEof(buf, m_fileInfo.size_ - m_nReceivedFileSize);
+			if (m_nCount < m_nMaxCount) {
+				OnBody(buf, len);
+			}
+			else {
+				OnEof(buf, m_fileInfo.size_ - m_nReceivedFileSize);
+			}
 		}
+	}
+	else {
+		OnBody(buf, len);
 	}
 }
 
@@ -64,8 +72,7 @@ CFile* CBulkInDataProc::OnHeader(PUCHAR buf, LONG len)
 
 void CBulkInDataProc::OnBody(PUCHAR buf, LONG len)
 {
-	ASSERT(m_pFile);
-	m_pFile->Write(buf, len);
+	if (m_pFile) m_pFile->Write(buf, len);
 	m_nReceivedFileSize += len;
 }
 

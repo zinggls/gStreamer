@@ -94,7 +94,6 @@ UINT CXferBulkOut::Read(CFile *pFile, UCHAR *buffer, UINT nCount)
 
 void CXferBulkOut::processFile(CFile *pFile)
 {
-	ASSERT(pFile);
 	int nQueueSize = adjustQueueSize(pFile);
 	for (int i = 0; i < nQueueSize; i++) {
 		if (pFile) { //BULK OUT인데 파일로 부터 읽어들여 보내는 경우임
@@ -147,7 +146,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 					}
 				}
 #endif
-				TRACE("%S, %dbytes sent\n", pFile->GetFileName().GetBuffer(), *m_pUlBytesTransferred);
+				if(pFile) TRACE("%S, %dbytes sent\n", pFile->GetFileName().GetBuffer(), *m_pUlBytesTransferred);
 			}
 			else {
 				(*m_pUlFailureCount)++;
@@ -190,6 +189,7 @@ void CXferBulkOut::processFile(CFile *pFile)
 
 int CXferBulkOut::adjustQueueSize(CFile *pFile)
 {
+	if (pFile == NULL) return m_nQueueSize;
 	DWORD fileSize = GetFileSize(pFile->m_hFile, NULL);
 
 	if (fileSize < (m_uLen*m_nQueueSize)) {
