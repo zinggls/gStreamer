@@ -102,7 +102,6 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_SYNC_FOUND, &CgStreamerDlg::OnSyncFound)
 	ON_MESSAGE(WM_FILE_RECEIVED, &CgStreamerDlg::OnFileReceived)
 	ON_MESSAGE(WM_DATA_SENT, &CgStreamerDlg::OnDataSent)
-	ON_MESSAGE(WM_DATA_RECEIVED, &CgStreamerDlg::OnDataReceived)
 	ON_MESSAGE(WM_FILE_SENT, &CgStreamerDlg::OnFileSent)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 END_MESSAGE_MAP()
@@ -770,11 +769,6 @@ UINT CgStreamerDlg::XferBulk(LPVOID pParam)
 }
 
 LRESULT CgStreamerDlg::OnDataSent(WPARAM wParam, LPARAM lParam)
-{
-	return 0;
-}
-
-LRESULT CgStreamerDlg::OnDataReceived(WPARAM wParam, LPARAM lParam)
 {
 	return 0;
 }
