@@ -98,5 +98,8 @@
     <Image Include="res\Z.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="res\lightning.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>
