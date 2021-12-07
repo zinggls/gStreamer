@@ -104,6 +104,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_ALL_FILES_RECEIVED, &CgStreamerDlg::OnAllFilesReceived)
 	ON_MESSAGE(WM_FIRST_HEADER, &CgStreamerDlg::OnFirstHeader)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 
@@ -802,4 +803,14 @@ LRESULT CgStreamerDlg::OnFirstHeader(WPARAM wParam, LPARAM lParam)
 	str.Format(_T("First header of %d files received"), ((FILEINFO*)wParam)->files_);
 	L(str);
 	return 0;
+}
+
+void CgStreamerDlg::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	CMenu popup;
+	popup.LoadMenu(IDR_MAIN_MENU);
+
+	CMenu* pMenu = popup.GetSubMenu(0);
+	pMenu->TrackPopupMenu(TPM_LEFTALIGN || TPM_RIGHTBUTTON, point.x, point.y, this);
 }
