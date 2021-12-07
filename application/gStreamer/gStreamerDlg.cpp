@@ -601,7 +601,7 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	if (nIDEvent == COUNT_REFRESH_TIMER) {
 		m_transferRate.SetPos((short)(m_curKBps/1000));	//KBps에서 MBps단위로 변환
-		m_KBps.Format(_T("%.0f KBps"), m_curKBps);
+		m_KBps.Format(_T("%.0fKBps (%.1fGbps)"), m_curKBps, 8.*m_curKBps/1000000.);
 		UpdateData(FALSE);
 	}
 
