@@ -113,4 +113,5 @@ public:
 	BOOL m_bPnP_DevNodeChange;
 	void ResetEndPoint();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnMainmenuClearlog();
 };

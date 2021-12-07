@@ -105,6 +105,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_MESSAGE(WM_FIRST_HEADER, &CgStreamerDlg::OnFirstHeader)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_MAINMENU_CLEARLOG, &CgStreamerDlg::OnMainmenuClearlog)
 END_MESSAGE_MAP()
 
 
@@ -813,4 +814,11 @@ void CgStreamerDlg::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 
 	CMenu* pMenu = popup.GetSubMenu(0);
 	pMenu->TrackPopupMenu(TPM_LEFTALIGN || TPM_RIGHTBUTTON, point.x, point.y, this);
+}
+
+
+void CgStreamerDlg::OnMainmenuClearlog()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	m_log.ResetContent();
 }
