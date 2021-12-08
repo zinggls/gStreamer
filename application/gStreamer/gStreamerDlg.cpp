@@ -65,6 +65,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_pXfer(NULL)
 	, m_bPnP_Arrival(FALSE),m_bPnP_Removal(FALSE),m_bPnP_DevNodeChange(FALSE)
 {
+	memset(&gPrev, 0, sizeof(ByteSec));
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 

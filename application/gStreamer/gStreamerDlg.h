@@ -7,6 +7,7 @@
 #include "afxcmn.h"
 #include "fileInfo.h"
 #include "userDefinedMessage.h"
+#include <chrono>
 
 class CCyUSBDevice;
 class CCyUSBEndPoint;
@@ -16,6 +17,11 @@ class CXferBulk;
 #define MAX_QUEUE_SIZE			64
 #define MAX_LOG					1000
 #define MAX_KBPS				625				//625MBps, FX3는 Max 5G bps이므로 바이트단위로는 5/8 = 0.625 GBps = 625 MBps
+
+typedef struct {
+	size_t bytes;
+	std::chrono::high_resolution_clock::time_point now;
+}ByteSec;
 
 // CgStreamerDlg 대화 상자
 class CgStreamerDlg : public CDialogEx
@@ -114,4 +120,5 @@ public:
 	void ResetEndPoint();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnMainmenuClearlog();
+	ByteSec gPrev;
 };
