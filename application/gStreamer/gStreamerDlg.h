@@ -12,6 +12,7 @@
 class CCyUSBDevice;
 class CCyUSBEndPoint;
 class CXferBulk;
+class COScopeCtrl;
 
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
@@ -122,4 +123,5 @@ public:
 	afx_msg void OnMainmenuClearlog();
 	ByteSec m_Prev;
 	static float BpsVal(unsigned int size, float sec);
+	COScopeCtrl *m_pGraph;
 };

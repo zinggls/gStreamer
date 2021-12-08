@@ -64,6 +64,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_strFileName(_T(""))
 	, m_pXfer(NULL)
 	, m_bPnP_Arrival(FALSE),m_bPnP_Removal(FALSE),m_bPnP_DevNodeChange(FALSE)
+	, m_pGraph(NULL)
 {
 	memset(&m_Prev, 0, sizeof(ByteSec));
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -236,6 +237,7 @@ void CgStreamerDlg::OnDestroy()
 	CDialogEx::OnDestroy();
 
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	delete m_pGraph;
 	terminateThread();
 	delete m_pUsbDev;
 }
