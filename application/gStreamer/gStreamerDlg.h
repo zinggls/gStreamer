@@ -120,5 +120,5 @@ public:
 	void ResetEndPoint();
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnMainmenuClearlog();
-	ByteSec gPrev;
+	ByteSec m_Prev;
 };
