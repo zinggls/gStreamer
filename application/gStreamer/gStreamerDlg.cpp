@@ -10,6 +10,7 @@
 #include "XferBulkIn.h"
 #include "XferBulkOut.h"
 #include <dbt.h>
+#include "OScopeCtrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -178,6 +179,20 @@ BOOL CgStreamerDlg::OnInitDialog()
 	GetDlgItem(IDC_FAILURE_COUNT_EDIT)->EnableWindow(FALSE);
 	GetDlgItem(IDC_BEGINDATAXFER_ERROR_COUNT_EDIT)->EnableWindow(FALSE);
 	m_fileSelect.ShowWindow(SW_HIDE);
+
+	CRect rtGraph;
+	GetDlgItem(IDC_GRAPH_STATIC)->GetWindowRect(rtGraph);
+	ScreenToClient(rtGraph);
+
+	m_pGraph = new COScopeCtrl(1);
+	m_pGraph->Create(WS_VISIBLE | WS_CHILD, rtGraph, this, IDC_GRAPH_STATIC);
+	m_pGraph->SetRanges(0,2.5);
+	m_pGraph->autofitYscale = true;
+	m_pGraph->SetYUnits(_T("Gbps"));
+	m_pGraph->SetXUnits(_T("Time"));
+	m_pGraph->SetLegendLabel(_T("Data Rate"), 0);
+	m_pGraph->SetPlotColor(RGB(255, 0, 0), 0);
+	m_pGraph->InvalidateCtrl();
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
