@@ -469,23 +469,24 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 	m_dcGrid.TextOut(m_rectPlot.left - 4, m_rectPlot.bottom - 7, strTemp);
 
 	// x units
+/*
 	m_dcGrid.SetTextAlign(TA_RIGHT | TA_BOTTOM);
 	m_dcGrid.TextOut(m_rectClient.right - 2, m_rectClient.bottom - 2, m_str.XUnits);
-
+*/
 	// restore the font
 	m_dcGrid.SelectObject(oldFont);
 	
 	// y units
 	oldFont = m_dcGrid.SelectObject(&yUnitFont);
 	m_dcGrid.SetTextAlign(TA_CENTER | TA_BASELINE);
-	
+/*	
 	CRect rText(0,0,0,0);
 	m_dcGrid.DrawText(m_str.YUnits, rText, DT_CALCRECT);
 	m_dcGrid.TextOut((m_rectClient.left + m_rectPlot.left - 8) / 2 - rText.Height() / 2,
 					 (m_rectPlot.bottom + m_rectPlot.top) / 2 - rText.Height() / 2,
 					 m_str.YUnits );
 	m_dcGrid.SelectObject(oldFont);
-
+*/
 	oldFont = m_dcGrid.SelectObject(&sm_fontAxis);
 	m_dcGrid.SetTextAlign(TA_LEFT | TA_TOP);
 
