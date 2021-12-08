@@ -121,4 +121,5 @@ public:
 	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 	afx_msg void OnMainmenuClearlog();
 	ByteSec m_Prev;
+	static float BpsVal(unsigned int size, float sec);
 };

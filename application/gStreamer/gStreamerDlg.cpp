@@ -611,7 +611,17 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	if (nIDEvent == DATARATE_TIMER) {
-		TRACE("DATARATE_TIMER\n");
+		if (m_Prev.bytes == 0) m_Prev.bytes = *m_pXfer->m_pUlBytesTransferred;
+
+		auto stop = std::chrono::high_resolution_clock::now();
+		size_t bytes = *m_pXfer->m_pUlBytesTransferred;
+		float sec = std::chrono::duration_cast<std::chrono::milliseconds>(stop - m_Prev.now).count() / 1000.;
+
+		int bps = 8 * (int)BpsVal(bytes - m_Prev.bytes, sec);
+
+		m_Prev.now = stop;
+		m_Prev.bytes = bytes;
+		TRACE("bps=%d\n",bps);
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
@@ -830,4 +840,10 @@ void CgStreamerDlg::OnMainmenuClearlog()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	m_log.ResetContent();
+}
+
+
+float CgStreamerDlg::BpsVal(unsigned int size, float sec)
+{
+	return (float)size / sec;
 }
