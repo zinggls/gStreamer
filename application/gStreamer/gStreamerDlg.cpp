@@ -17,6 +17,8 @@
 
 #define COUNT_REFRESH_TIMER				1
 #define COUNT_REFRESH_TIMER_INTERVAL	10
+#define DATARATE_TIMER					2
+#define DATARATE_TIMER_INTERVAL			100
 
 // 응용 프로그램 정보에 사용되는 CAboutDlg 대화 상자입니다.
 
@@ -548,6 +550,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		}
 		m_startButton.SetWindowTextW(_T("Stop"));
 		SetTimer(COUNT_REFRESH_TIMER, COUNT_REFRESH_TIMER_INTERVAL, NULL);
+		SetTimer(DATARATE_TIMER, DATARATE_TIMER_INTERVAL, NULL);
 		GetDlgItem(IDC_DEVICE_COMBO)->EnableWindow(FALSE);
 		GetDlgItem(IDC_ENDPOINT_COMBO)->EnableWindow(FALSE);
 		GetDlgItem(IDC_PPX_COMBO)->EnableWindow(FALSE);
@@ -558,6 +561,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 	}
 	else {
 		terminateThread();
+		KillTimer(DATARATE_TIMER);
 		GetDlgItem(IDC_DEVICE_COMBO)->EnableWindow(TRUE);
 		GetDlgItem(IDC_ENDPOINT_COMBO)->EnableWindow(TRUE);
 		GetDlgItem(IDC_PPX_COMBO)->EnableWindow(TRUE);
@@ -603,6 +607,10 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 		m_transferRate.SetPos((short)(m_curKBps / 1024));	//KBps에서 MBps단위로 변환	(1KB = 1024byte, 1MB = 1024KB)
 		m_KBps.Format(_T("%.0fKBps (%.2fGbps)"), m_curKBps, 8.*m_curKBps*1024. / 1000000000.);	//통신에서는 보통 1000byte를 1KB로 표시한다. 1000000000로 나누면 GBps단위로 변환
 		UpdateData(FALSE);
+	}
+
+	if (nIDEvent == DATARATE_TIMER) {
+		TRACE("DATARATE_TIMER\n");
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
