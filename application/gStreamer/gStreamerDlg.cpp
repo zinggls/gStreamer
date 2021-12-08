@@ -639,6 +639,9 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 		m_Prev.now = stop;
 		m_Prev.bytes = bytes;
 		TRACE("bps=%d\n",bps);
+
+		double value[1] = { bps/1000000000. };
+		m_pGraph->AppendPoints(value);
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
