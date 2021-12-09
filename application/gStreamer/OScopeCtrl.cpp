@@ -817,9 +817,9 @@ void COScopeCtrl::OnSize(UINT nType, int cx, int cy)
 	// the "left" coordinate and "width" will be modified in InvalidateCtrl to be based on the width 
 	// of the y axis scaling
 	m_rectPlot.left = 20;
-	m_rectPlot.top = 10;
-	m_rectPlot.right = m_rectClient.right - 10;
-	m_rectPlot.bottom = m_rectClient.bottom - 3 - (abs(sm_logFontAxis.lfHeight) + 2)*2 - 3;
+	m_rectPlot.top = 8;
+	m_rectPlot.right = m_rectClient.right-10;
+	m_rectPlot.bottom = m_rectClient.bottom - 15;
 	
 	m_nPlotHeight = m_rectPlot.Height();
 	m_nPlotWidth = m_rectPlot.Width();
