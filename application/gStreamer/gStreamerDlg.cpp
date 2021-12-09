@@ -189,8 +189,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 	m_pGraph->SetRanges(0,2.5);
 	m_pGraph->autofitYscale = true;
 	m_pGraph->SetYUnits(_T("Gbps"));
-	m_pGraph->SetXUnits(_T("Time"));
-	m_pGraph->SetLegendLabel(_T("Data Rate"), 0);
+	m_pGraph->SetLegendLabel(_T("Realtime Transfer Speed"), 0);
 	m_pGraph->SetPlotColor(RGB(255, 0, 0), 0);
 	m_pGraph->InvalidateCtrl();
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
