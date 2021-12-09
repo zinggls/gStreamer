@@ -434,7 +434,7 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 		}
 	}
 
-	yUnitFont.CreateFont(10, 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
+	yUnitFont.CreateFont(12, 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
 						 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("MS Shell Dlg"));
 
 	// grab the horizontal font
