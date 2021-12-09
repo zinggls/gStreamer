@@ -434,7 +434,7 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 		}
 	}
 
-	yUnitFont.CreateFont(12, 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
+	yUnitFont.CreateFont(10, 0, 900, 900, FW_NORMAL, FALSE, FALSE, 0, DEFAULT_CHARSET,
 						 OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH, _T("MS Shell Dlg"));
 
 	// grab the horizontal font
@@ -479,14 +479,12 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 	// y units
 	oldFont = m_dcGrid.SelectObject(&yUnitFont);
 	m_dcGrid.SetTextAlign(TA_CENTER | TA_BASELINE);
-/*	
+///*	
 	CRect rText(0,0,0,0);
 	m_dcGrid.DrawText(m_str.YUnits, rText, DT_CALCRECT);
-	m_dcGrid.TextOut((m_rectClient.left + m_rectPlot.left - 8) / 2 - rText.Height() / 2,
-					 (m_rectPlot.bottom + m_rectPlot.top) / 2 - rText.Height() / 2,
-					 m_str.YUnits );
+	m_dcGrid.TextOut(10,25,m_str.YUnits );	//x,y좌료를 하드코딩
 	m_dcGrid.SelectObject(oldFont);
-*/
+
 	oldFont = m_dcGrid.SelectObject(&sm_fontAxis);
 	m_dcGrid.SetTextAlign(TA_LEFT | TA_TOP);
 
