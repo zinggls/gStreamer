@@ -482,7 +482,7 @@ void COScopeCtrl::InvalidateCtrl(bool deleteGraph)
 ///*	
 	CRect rText(0,0,0,0);
 	m_dcGrid.DrawText(m_str.YUnits, rText, DT_CALCRECT);
-	m_dcGrid.TextOut(10,25,m_str.YUnits );	//x,y좌료를 하드코딩
+	m_dcGrid.TextOut(28,35,m_str.YUnits );	//x,y좌료를 하드코딩
 	m_dcGrid.SelectObject(oldFont);
 
 	oldFont = m_dcGrid.SelectObject(&sm_fontAxis);
