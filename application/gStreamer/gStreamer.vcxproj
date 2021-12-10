@@ -242,6 +242,7 @@
     <None Include="res\gStreamer.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\GLS.bmp" />
     <Image Include="res\gStreamer.ico" />
     <Image Include="res\lightning.ico" />
     <Image Include="res\Z.ico" />
