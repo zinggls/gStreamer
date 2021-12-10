@@ -66,6 +66,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_pXfer(NULL)
 	, m_bPnP_Arrival(FALSE),m_bPnP_Removal(FALSE),m_bPnP_DevNodeChange(FALSE)
 	, m_pGraph(NULL)
+	, m_strSpeed(_T(""))
 {
 	memset(&m_Prev, 0, sizeof(ByteSec));
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -88,6 +89,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FILE_SELECT_STATIC, m_fileSelect);
 	DDX_Control(pDX, IDC_FILE_SELECT_BUTTON, m_fileSelectBtn);
 	DDX_Text(pDX, IDC_FILENAME_EDIT, m_strFileName);
+	DDX_Text(pDX, IDC_REALTIME_SPEED_STATIC, m_strSpeed);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)

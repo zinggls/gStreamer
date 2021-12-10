@@ -124,4 +124,5 @@ public:
 	ByteSec m_Prev;
 	static float BpsVal(unsigned int size, float sec);
 	COScopeCtrl *m_pGraph;
+	CString m_strSpeed;
 };
