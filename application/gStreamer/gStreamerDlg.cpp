@@ -643,6 +643,8 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 
 		double value[1] = { bps/1000000000. };
 		m_pGraph->AppendPoints(value);
+
+		m_strSpeed.Format(_T("%.3fGbps"), value[0]);
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
