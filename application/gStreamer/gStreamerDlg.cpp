@@ -629,10 +629,17 @@ void CgStreamerDlg::OnTimer(UINT_PTR nIDEvent)
 	}
 
 	if (nIDEvent == DATARATE_TIMER) {
-		if (m_Prev.bytes == 0) m_Prev.bytes = *m_pXfer->m_pUlBytesTransferred;
+		if (m_Prev.bytes == 0) {
+			if (m_pXfer)
+				m_Prev.bytes = *m_pXfer->m_pUlBytesTransferred;
+			else
+				m_Prev.bytes = 0;
+		}
 
 		auto stop = std::chrono::high_resolution_clock::now();
-		size_t bytes = *m_pXfer->m_pUlBytesTransferred;
+
+		size_t bytes = 0;
+		if(m_pXfer) size_t bytes = *m_pXfer->m_pUlBytesTransferred;
 		float sec = std::chrono::duration_cast<std::chrono::milliseconds>(stop - m_Prev.now).count() / 1000.;
 
 		int bps = 8 * (int)BpsVal(bytes - m_Prev.bytes, sec);
@@ -758,6 +765,7 @@ UINT CgStreamerDlg::XferBulk(LPVOID pParam)
 	pDlg->m_pXfer->close();
 
 	delete pDlg->m_pXfer;
+	pDlg->m_pXfer = NULL;
 	pDlg->PostMessage(WM_THREAD_TERMINATED);
 	return 0;
 }
