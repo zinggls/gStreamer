@@ -725,7 +725,7 @@ LRESULT CgStreamerDlg::OnFileReceived(WPARAM wParam, LPARAM lParam)
 	ASSERT(wParam);
 
 	CString str;
-	str.Format(_T("%s(%d bytes), %d bytes received"), ((FILEINFO*)wParam)->name_, ((FILEINFO*)wParam)->size_,(ULONGLONG)lParam);
+	str.Format(_T("%s(%lu bytes), %lu bytes received"), ((FILEINFO*)wParam)->name_, ((FILEINFO*)wParam)->size_,(ULONGLONG)lParam);
 	L(str);
 	return 0;
 }
