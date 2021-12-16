@@ -878,3 +878,18 @@ float CgStreamerDlg::BpsVal(unsigned int size, float sec)
 {
 	return (float)size / sec;
 }
+
+void CgStreamerDlg::ResetDevice()
+{
+	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
+	ASSERT(pCEP);
+	pCEP->ReqCode = 0x3;
+
+	unsigned char buf[512];
+	ZeroMemory(buf, 512);
+	sprintf_s(reinterpret_cast<char*>(buf), sizeof(buf), "FX3 RST");
+	LONG bytesToSend = 7;
+
+	bool bWrite = pCEP->Write(buf,bytesToSend);
+	ASSERT(bWrite);
+}
