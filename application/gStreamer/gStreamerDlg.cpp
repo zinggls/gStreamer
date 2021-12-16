@@ -883,22 +883,28 @@ float CgStreamerDlg::BpsVal(unsigned int size, float sec)
 
 void CgStreamerDlg::ResetDevice()
 {
-	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
-	if (pCEP) {
-		ASSERT(pCEP);
-		pCEP->ReqCode = 0x3;
+	unsigned char buf[512];
+	ZeroMemory(buf, 512);
+	sprintf_s(reinterpret_cast<char*>(buf), sizeof(buf), "FX3 RST");
+	LONG bytesToSend = 7;
 
-		unsigned char buf[512];
-		ZeroMemory(buf, 512);
-		sprintf_s(reinterpret_cast<char*>(buf), sizeof(buf), "FX3 RST");
-		LONG bytesToSend = 7;
-
-		bool bWrite = pCEP->Write(buf, bytesToSend);
-		ASSERT(bWrite);
-
+	if (sendEP0(0x3, buf, bytesToSend)) {
 		m_bReset = TRUE;
 	}
 	else {
 		m_bReset = FALSE;
+	}
+}
+
+
+BOOL CgStreamerDlg::sendEP0(unsigned char reqCode, unsigned char *pBuf,LONG &bufSize)
+{
+	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
+	if (pCEP) {
+		pCEP->ReqCode = reqCode;
+		return pCEP->Write(pBuf, bufSize);
+	}
+	else {
+		return FALSE;
 	}
 }

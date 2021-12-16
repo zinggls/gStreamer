@@ -127,4 +127,5 @@ public:
 	CString m_strSpeed;
 	void ResetDevice();
 	BOOL m_bReset;
+	BOOL sendEP0(unsigned char reqCode, unsigned char* pBuf, LONG& bufSize);
 };
