@@ -126,4 +126,5 @@ public:
 	COScopeCtrl *m_pGraph;
 	CString m_strSpeed;
 	void ResetDevice();
+	BOOL m_bReset;
 };

@@ -67,6 +67,7 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_bPnP_Arrival(FALSE),m_bPnP_Removal(FALSE),m_bPnP_DevNodeChange(FALSE)
 	, m_pGraph(NULL)
 	, m_strSpeed(_T(""))
+	, m_bReset(FALSE)
 {
 	memset(&m_Prev, 0, sizeof(ByteSec));
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -268,6 +269,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		return FALSE;
 	}
 
+	if (!m_bReset) ResetDevice();
 	m_deviceCombo.ResetContent();
 	m_deviceCombo.EnableWindow(FALSE);
 	int devCnt = m_pUsbDev->DeviceCount();
@@ -892,4 +894,6 @@ void CgStreamerDlg::ResetDevice()
 
 	bool bWrite = pCEP->Write(buf,bytesToSend);
 	ASSERT(bWrite);
+
+	m_bReset = TRUE;
 }
