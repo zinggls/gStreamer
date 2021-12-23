@@ -91,6 +91,7 @@ void CgStreamerDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_FILE_SELECT_BUTTON, m_fileSelectBtn);
 	DDX_Text(pDX, IDC_FILENAME_EDIT, m_strFileName);
 	DDX_Text(pDX, IDC_REALTIME_SPEED_STATIC, m_strSpeed);
+	DDX_Control(pDX, IDC_ZING_MODE_COMBO, m_zingModeCombo);
 }
 
 BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
@@ -172,6 +173,9 @@ BOOL CgStreamerDlg::OnInitDialog()
 	}
 	m_queueCombo.SetCurSel(4);	//4 default Queue index, which is 16
 	OnCbnSelchangeQueueCombo();
+
+	m_zingModeCombo.AddString(_T("PPC"));
+	m_zingModeCombo.AddString(_T("DEV"));
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? L(errMsg):L(_T("streamer device ok"));
