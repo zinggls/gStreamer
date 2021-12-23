@@ -888,7 +888,9 @@ void CgStreamerDlg::ResetDevice()
 	sprintf_s(reinterpret_cast<char*>(buf), sizeof(buf), "FX3 RST");
 	LONG bytesToSend = 7;
 
-	if (sendEP0(0x3, buf, bytesToSend)) {
+	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
+	pCEP->ReqCode = 0x3;
+	if (sendEP0(pCEP, buf, bytesToSend)) {
 		m_bReset = TRUE;
 	}
 	else {
