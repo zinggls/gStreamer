@@ -908,3 +908,10 @@ BOOL CgStreamerDlg::sendEP0(unsigned char reqCode, unsigned char *pBuf,LONG &buf
 		return FALSE;
 	}
 }
+
+
+BOOL CgStreamerDlg::sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG& bufSize)
+{
+	ASSERT(pCEP);
+	return pCEP->Write(pBuf, bufSize);
+}

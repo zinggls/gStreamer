@@ -13,6 +13,7 @@ class CCyUSBDevice;
 class CCyUSBEndPoint;
 class CXferBulk;
 class COScopeCtrl;
+class CCyControlEndPoint;
 
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
@@ -128,4 +129,5 @@ public:
 	void ResetDevice();
 	BOOL m_bReset;
 	BOOL sendEP0(unsigned char reqCode, unsigned char* pBuf, LONG& bufSize);
+	BOOL sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG& bufSize);
 };
