@@ -904,3 +904,20 @@ BOOL CgStreamerDlg::sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG&
 	ASSERT(pCEP);
 	return pCEP->Write(pBuf, bufSize);
 }
+
+
+void CgStreamerDlg::ep0DataXfer(unsigned char reqCode, unsigned char* buf, LONG bufSize, ULONG timeOut)
+{
+	ASSERT(m_pUsbDev);
+	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
+	pCEP->ReqCode = reqCode;
+
+	OVERLAPPED OvLap;
+	OvLap.hEvent = CreateEvent(NULL, false, false, NULL);
+
+	PUCHAR Context = pCEP->BeginDataXfer(buf, bufSize, &OvLap);
+	pCEP->WaitForXfer(&OvLap, timeOut);
+	pCEP->FinishDataXfer(buf, bufSize, &OvLap, Context);
+
+	CloseHandle(OvLap.hEvent);
+}

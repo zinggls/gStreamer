@@ -129,4 +129,5 @@ public:
 	void ResetDevice();
 	BOOL m_bReset;
 	BOOL sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG& bufSize);
+	void CgStreamerDlg::ep0DataXfer(unsigned char reqCode, unsigned char* buf, LONG bufSize, ULONG timeOut=0);
 };
