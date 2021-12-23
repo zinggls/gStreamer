@@ -899,19 +899,6 @@ void CgStreamerDlg::ResetDevice()
 }
 
 
-BOOL CgStreamerDlg::sendEP0(unsigned char reqCode, unsigned char *pBuf,LONG &bufSize)
-{
-	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
-	if (pCEP) {
-		pCEP->ReqCode = reqCode;
-		return pCEP->Write(pBuf, bufSize);
-	}
-	else {
-		return FALSE;
-	}
-}
-
-
 BOOL CgStreamerDlg::sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG& bufSize)
 {
 	ASSERT(pCEP);

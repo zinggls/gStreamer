@@ -128,6 +128,5 @@ public:
 	CString m_strSpeed;
 	void ResetDevice();
 	BOOL m_bReset;
-	BOOL sendEP0(unsigned char reqCode, unsigned char* pBuf, LONG& bufSize);
 	BOOL sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG& bufSize);
 };
