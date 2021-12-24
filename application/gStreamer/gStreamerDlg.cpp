@@ -199,6 +199,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 	m_pGraph->SetLegendLabel(_T("Realtime Transfer Speed"), 0);
 	m_pGraph->SetPlotColor(RGB(255, 0, 0), 0);
 	m_pGraph->InvalidateCtrl();
+	GetDlgItem(IDC_KBPS_PROGRESS1)->ShowWindow(SW_HIDE);
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
 
@@ -587,6 +588,7 @@ void CgStreamerDlg::OnBnClickedStartButton()
 		GetDlgItem(IDC_QUEUE_COMBO)->EnableWindow(FALSE);
 		GetDlgItem(IDC_FILE_SELECT_BUTTON)->EnableWindow(FALSE);
 		GetDlgItem(IDC_FILENAME_EDIT)->EnableWindow(FALSE);
+		GetDlgItem(IDC_KBPS_PROGRESS1)->ShowWindow(SW_SHOW);
 		L(_T("Xfer thread started"));
 	}
 	else {
