@@ -945,21 +945,9 @@ void CgStreamerDlg::UpdateZingMode()
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"GET ZING MODE", (LONG)strlen("GET ZING MODE"));
 	Sleep(100);
 
-	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
-	pCEP->ReqCode = 0x3;
-	pCEP->Direction = DIR_FROM_DEVICE;
-
-	OVERLAPPED OvLap;
-	OvLap.hEvent = CreateEvent(NULL, false, false, NULL);
-
 	unsigned char buf[4] = { 0, };
-	LONG bufSize = 3;
-	PUCHAR Context = pCEP->BeginDataXfer(buf, bufSize, &OvLap);
-	pCEP->WaitForXfer(&OvLap, 100);
-	pCEP->FinishDataXfer(buf, bufSize, &OvLap, Context);
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 3, 100);
 	TRACE("Zing Mode=%s\n", buf);
-
-	CloseHandle(OvLap.hEvent);
 
 	Sleep(100);
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
