@@ -939,7 +939,6 @@ void CgStreamerDlg::ep0DataXfer(CTL_XFER_TGT_TYPE target, CTL_XFER_REQ_TYPE reqT
 
 void CgStreamerDlg::UpdateZingMode()
 {
-	Sleep(100);
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE SYNC", (LONG)strlen("DMA MODE SYNC"));
 	Sleep(100);
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"GET ZING MODE", (LONG)strlen("GET ZING MODE"));
@@ -951,5 +950,4 @@ void CgStreamerDlg::UpdateZingMode()
 
 	Sleep(100);
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
-	Sleep(100);
 }
