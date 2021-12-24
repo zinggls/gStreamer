@@ -175,6 +175,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 
 	m_zingModeCombo.AddString(_T("DEV"));
 	m_zingModeCombo.AddString(_T("PPC"));
+	GetDlgItem(IDC_ZING_MODE_COMBO)->EnableWindow(FALSE);
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? L(errMsg):L(_T("streamer device ok"));
