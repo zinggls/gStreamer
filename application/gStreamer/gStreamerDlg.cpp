@@ -272,7 +272,12 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		return FALSE;
 	}
 	
-	if (!m_bReset) ResetDevice();
+	if (!m_bReset) {
+		ResetDevice();
+	}
+	else {
+		UpdateZingMode();
+	}
 	m_deviceCombo.ResetContent();
 	m_deviceCombo.EnableWindow(FALSE);
 	int devCnt = m_pUsbDev->DeviceCount();
@@ -929,4 +934,34 @@ void CgStreamerDlg::ep0DataXfer(CTL_XFER_TGT_TYPE target, CTL_XFER_REQ_TYPE reqT
 	pCEP->FinishDataXfer(buf, bufSize, &OvLap, Context);
 
 	CloseHandle(OvLap.hEvent);
+}
+
+
+void CgStreamerDlg::UpdateZingMode()
+{
+	Sleep(100);
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE SYNC", (LONG)strlen("DMA MODE SYNC"));
+	Sleep(100);
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"GET ZING MODE", (LONG)strlen("GET ZING MODE"));
+	Sleep(100);
+
+	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
+	pCEP->ReqCode = 0x3;
+	pCEP->Direction = DIR_FROM_DEVICE;
+
+	OVERLAPPED OvLap;
+	OvLap.hEvent = CreateEvent(NULL, false, false, NULL);
+
+	unsigned char buf[4] = { 0, };
+	LONG bufSize = 3;
+	PUCHAR Context = pCEP->BeginDataXfer(buf, bufSize, &OvLap);
+	pCEP->WaitForXfer(&OvLap, 100);
+	pCEP->FinishDataXfer(buf, bufSize, &OvLap, Context);
+	TRACE("Zing Mode=%s\n", buf);
+
+	CloseHandle(OvLap.hEvent);
+
+	Sleep(100);
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
+	Sleep(100);
 }

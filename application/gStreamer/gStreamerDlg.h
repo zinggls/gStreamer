@@ -132,4 +132,5 @@ public:
 	void ep0DataXfer(CTL_XFER_TGT_TYPE target, CTL_XFER_REQ_TYPE reqType, CTL_XFER_DIR_TYPE direction,
 		UCHAR reqCode, WORD value, WORD index, unsigned char* buf, LONG bufSize, ULONG timeOut=0);
 	CComboBox m_zingModeCombo;
+	void UpdateZingMode();
 };
