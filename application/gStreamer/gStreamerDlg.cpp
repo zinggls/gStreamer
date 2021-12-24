@@ -948,6 +948,5 @@ void CgStreamerDlg::UpdateZingMode()
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 3, 100);
 	TRACE("Zing Mode=%s\n", buf);
 
-	Sleep(100);
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
 }
