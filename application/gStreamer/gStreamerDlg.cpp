@@ -173,8 +173,8 @@ BOOL CgStreamerDlg::OnInitDialog()
 	m_queueCombo.SetCurSel(4);	//4 default Queue index, which is 16
 	OnCbnSelchangeQueueCombo();
 
-	m_zingModeCombo.AddString(_T("PPC"));
 	m_zingModeCombo.AddString(_T("DEV"));
+	m_zingModeCombo.AddString(_T("PPC"));
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? L(errMsg):L(_T("streamer device ok"));
@@ -947,6 +947,16 @@ void CgStreamerDlg::UpdateZingMode()
 	unsigned char buf[4] = { 0, };
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 3, 100);
 	TRACE("Zing Mode=%s\n", buf);
+
+	if (CString(buf) == _T("DEV")) {
+		m_zingModeCombo.SetCurSel(0);
+	}
+	else if (CString(buf) == _T("PPC")) {
+		m_zingModeCombo.SetCurSel(1);
+	}
+	else {
+		ASSERT(false);	//이런 경우는 존재할 수 없음
+	}
 
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
 }
