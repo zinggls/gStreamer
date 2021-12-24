@@ -8,12 +8,12 @@
 #include "fileInfo.h"
 #include "userDefinedMessage.h"
 #include <chrono>
+#include <CyAPI.h>
 
 class CCyUSBDevice;
 class CCyUSBEndPoint;
 class CXferBulk;
 class COScopeCtrl;
-class CCyControlEndPoint;
 
 #define MAX_TRANSFER_LENGTH		0x400000		//4MByte
 #define MAX_QUEUE_SIZE			64
@@ -129,6 +129,7 @@ public:
 	void ResetDevice();
 	BOOL m_bReset;
 	BOOL sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG& bufSize);
-	void CgStreamerDlg::ep0DataXfer(unsigned char reqCode, unsigned char* buf, LONG bufSize, ULONG timeOut=0);
+	void ep0DataXfer(CTL_XFER_TGT_TYPE target, CTL_XFER_REQ_TYPE reqType, CTL_XFER_DIR_TYPE direction,
+		UCHAR reqCode, WORD value, WORD index, unsigned char* buf, LONG bufSize, ULONG timeOut=0);
 	CComboBox m_zingModeCombo;
 };

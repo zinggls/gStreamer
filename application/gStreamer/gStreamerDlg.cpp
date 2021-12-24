@@ -6,7 +6,6 @@
 #include "gStreamer.h"
 #include "gStreamerDlg.h"
 #include "afxdialogex.h"
-#include <CyAPI.h>
 #include "XferBulkIn.h"
 #include "XferBulkOut.h"
 #include <dbt.h>
@@ -272,7 +271,7 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 		errMsg = _T("Can't get USB Device instance");
 		return FALSE;
 	}
-
+	
 	if (!m_bReset) ResetDevice();
 	m_deviceCombo.ResetContent();
 	m_deviceCombo.EnableWindow(FALSE);
@@ -910,11 +909,17 @@ BOOL CgStreamerDlg::sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG&
 }
 
 
-void CgStreamerDlg::ep0DataXfer(unsigned char reqCode, unsigned char* buf, LONG bufSize, ULONG timeOut)
+void CgStreamerDlg::ep0DataXfer(CTL_XFER_TGT_TYPE target, CTL_XFER_REQ_TYPE reqType, CTL_XFER_DIR_TYPE direction,
+	UCHAR reqCode, WORD value, WORD index, unsigned char* buf, LONG bufSize, ULONG timeOut)
 {
 	ASSERT(m_pUsbDev);
 	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
+	pCEP->Target = target;
+	pCEP->ReqType = reqType;
+	pCEP->Direction = direction;
 	pCEP->ReqCode = reqCode;
+	pCEP->Value = value;
+	pCEP->Index = index;
 
 	OVERLAPPED OvLap;
 	OvLap.hEvent = CreateEvent(NULL, false, false, NULL);
