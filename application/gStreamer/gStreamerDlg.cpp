@@ -275,10 +275,10 @@ BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 	}
 	
 	if (!m_bReset) {
-		ResetDevice();
+		if (m_pUsbDev->ControlEndPt) ResetDevice();
 	}
 	else {
-		UpdateZingMode();
+		if (m_pUsbDev->ControlEndPt) UpdateZingMode();
 	}
 	m_deviceCombo.ResetContent();
 	m_deviceCombo.EnableWindow(FALSE);
