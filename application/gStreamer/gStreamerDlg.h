@@ -133,4 +133,5 @@ public:
 		UCHAR reqCode, WORD value, WORD index, unsigned char* buf, LONG bufSize, ULONG timeOut=0);
 	CComboBox m_zingModeCombo;
 	void UpdateZingMode();
+	void GetFirmwareVersion();
 };

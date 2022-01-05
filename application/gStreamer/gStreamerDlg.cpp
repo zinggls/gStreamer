@@ -960,6 +960,18 @@ void CgStreamerDlg::UpdateZingMode()
 	else {
 		ASSERT(false);	//이런 경우는 존재할 수 없음
 	}
+	GetFirmwareVersion();
 
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
+}
+
+
+void CgStreamerDlg::GetFirmwareVersion()
+{
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"VER", (LONG)strlen("VER"));
+	Sleep(100);
+
+	unsigned char buf[6] = { 0, };
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 5, 100);
+	L(_T("Firmware version: ")+CString(buf));
 }
