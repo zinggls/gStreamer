@@ -134,4 +134,5 @@ public:
 	CComboBox m_zingModeCombo;
 	void UpdateZingMode();
 	void GetFirmwareVersion();
+	afx_msg void OnCbnSelchangeZingModeCombo();
 };

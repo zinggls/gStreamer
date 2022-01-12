@@ -114,6 +114,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_FILE_SELECT_BUTTON, &CgStreamerDlg::OnBnClickedFileSelectButton)
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_MAINMENU_CLEARLOG, &CgStreamerDlg::OnMainmenuClearlog)
+	ON_CBN_SELCHANGE(IDC_ZING_MODE_COMBO, &CgStreamerDlg::OnCbnSelchangeZingModeCombo)
 END_MESSAGE_MAP()
 
 
@@ -175,7 +176,7 @@ BOOL CgStreamerDlg::OnInitDialog()
 
 	m_zingModeCombo.AddString(_T("DEV"));
 	m_zingModeCombo.AddString(_T("PPC"));
-	GetDlgItem(IDC_ZING_MODE_COMBO)->EnableWindow(FALSE);
+	GetDlgItem(IDC_ZING_MODE_COMBO)->EnableWindow(TRUE);
 
 	CString errMsg;
 	GetStreamerDevice(errMsg)==FALSE ? L(errMsg):L(_T("streamer device ok"));
@@ -974,4 +975,41 @@ void CgStreamerDlg::GetFirmwareVersion()
 	unsigned char buf[6] = { 0, };
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 5, 100);
 	L(_T("Firmware version: ")+CString(buf));
+}
+
+void CgStreamerDlg::OnCbnSelchangeZingModeCombo()
+{
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE SYNC", (LONG)strlen("DMA MODE SYNC"));
+	Sleep(100);
+
+	switch (m_zingModeCombo.GetCurSel()) {
+	case 0:
+		ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"ZING MODE DEV", (LONG)strlen("ZING MODE DEV"));
+		break;
+	case 1:
+		ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"ZING MODE PPC", (LONG)strlen("ZING MODE PPC"));
+		break;
+	}
+	Sleep(100);
+
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"GET ZING MODE", (LONG)strlen("GET ZING MODE"));
+	Sleep(100);
+
+	unsigned char buf[4] = { 0, };
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 3, 100);
+	TRACE("Zing Mode=%s\n", buf);
+
+	if (CString(buf) == _T("DEV")) {
+		m_zingModeCombo.SetCurSel(0);
+		L(_T("Updated Zing Mode: DEV"));
+	}
+	else if (CString(buf) == _T("PPC")) {
+		m_zingModeCombo.SetCurSel(1);
+		L(_T("Updated Zing Mode: PPC"));
+	}
+	else {
+		ASSERT(false);	//이런 경우는 존재할 수 없음
+	}
+
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
 }
