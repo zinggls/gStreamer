@@ -268,7 +268,10 @@ void CgStreamerDlg::OnDestroy()
 
 BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 {
-	if (m_pUsbDev) delete m_pUsbDev;
+	if (m_pUsbDev) {
+		delete m_pUsbDev->ControlEndPt;
+		delete m_pUsbDev;
+	}
 	m_pUsbDev = new CCyUSBDevice(this->m_hWnd, CYUSBDRV_GUID, true);
 	if (m_pUsbDev == NULL) {
 		errMsg = _T("Can't get USB Device instance");
