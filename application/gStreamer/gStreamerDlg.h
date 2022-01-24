@@ -65,7 +65,6 @@ protected:
 	afx_msg LRESULT OnFirstHeader(WPARAM wParam, LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnDestroy();
 	CListBox m_log;
 	BOOL GetStreamerDevice(CString &errMsg);
 	CComboBox m_deviceCombo;
@@ -135,4 +134,5 @@ public:
 	void UpdateZingMode();
 	void GetFirmwareVersion();
 	afx_msg void OnCbnSelchangeZingModeCombo();
+	afx_msg void OnNcDestroy();
 };

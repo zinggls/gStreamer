@@ -97,7 +97,6 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_WM_DESTROY()
 	ON_CBN_SELCHANGE(IDC_DEVICE_COMBO, &CgStreamerDlg::OnCbnSelchangeDeviceCombo)
 	ON_CBN_SELCHANGE(IDC_ENDPOINT_COMBO, &CgStreamerDlg::OnCbnSelchangeEndpointCombo)
 	ON_CBN_SELCHANGE(IDC_PPX_COMBO, &CgStreamerDlg::OnCbnSelchangePpxCombo)
@@ -115,6 +114,7 @@ BEGIN_MESSAGE_MAP(CgStreamerDlg, CDialogEx)
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_MAINMENU_CLEARLOG, &CgStreamerDlg::OnMainmenuClearlog)
 	ON_CBN_SELCHANGE(IDC_ZING_MODE_COMBO, &CgStreamerDlg::OnCbnSelchangeZingModeCombo)
+	ON_WM_NCDESTROY()
 END_MESSAGE_MAP()
 
 
@@ -251,18 +251,6 @@ void CgStreamerDlg::OnPaint()
 HCURSOR CgStreamerDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
-}
-
-
-
-void CgStreamerDlg::OnDestroy()
-{
-	CDialogEx::OnDestroy();
-
-	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
-	delete m_pGraph;
-	terminateThread();
-	delete m_pUsbDev;
 }
 
 
@@ -1017,4 +1005,15 @@ void CgStreamerDlg::OnCbnSelchangeZingModeCombo()
 	}
 
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
+}
+
+
+void CgStreamerDlg::OnNcDestroy()
+{
+	CDialogEx::OnNcDestroy();
+
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+	delete m_pGraph;
+	terminateThread();
+	delete m_pUsbDev;
 }
