@@ -302,8 +302,7 @@ BOOL CgStreamerDlg::GetEndPoints(int nSelect)
 	ASSERT(m_pUsbDev);
 	if (nSelect < 0) return FALSE;
 
-	if(m_pUsbDev->IsOpen()==true) m_pUsbDev->Close();
-	if (!m_pUsbDev->Open(nSelect)) return FALSE;
+	ASSERT(m_pUsbDev->IsOpen() == true);
 
 	int interfaces = m_pUsbDev->AltIntfcCount() + 1;
 
