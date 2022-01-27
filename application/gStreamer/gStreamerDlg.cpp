@@ -954,8 +954,20 @@ void CgStreamerDlg::UpdateZingMode()
 		ASSERT(false);	//이런 경우는 존재할 수 없음
 	}
 	GetFirmwareVersion();
+	GetUsbSpeed();
 
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"DMA MODE NORMAL", (LONG)strlen("DMA MODE NORMAL"));
+}
+
+
+void CgStreamerDlg::GetUsbSpeed()
+{
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_TO_DEVICE, 0x3, 0, 0, (unsigned char*)"GET USB SPEED", (LONG)strlen("GET USB SPEED"));
+	Sleep(100);
+
+	unsigned char buf[2] = { 0, };
+	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 1, 100);
+	TRACE("Get Usb Speed=%s\n", buf);
 }
 
 

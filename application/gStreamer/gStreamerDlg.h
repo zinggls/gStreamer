@@ -135,4 +135,5 @@ public:
 	void GetFirmwareVersion();
 	afx_msg void OnCbnSelchangeZingModeCombo();
 	afx_msg void OnNcDestroy();
+	void GetUsbSpeed();
 };
