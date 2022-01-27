@@ -968,6 +968,27 @@ void CgStreamerDlg::GetUsbSpeed()
 	unsigned char buf[2] = { 0, };
 	ep0DataXfer(TGT_DEVICE, REQ_VENDOR, DIR_FROM_DEVICE, 0x3, 0, 0, buf, 1, 100);
 	TRACE("Get Usb Speed=%s\n", buf);
+
+	LogUsbSpeed(atoi(reinterpret_cast<char*>(buf)));
+}
+
+
+void CgStreamerDlg::LogUsbSpeed(int speed)
+{
+	switch (speed) {
+	case 1:
+		L(_T("USB: Full Speed"));
+		break;
+	case 2:
+		L(_T("USB: High Speed"));
+		break;
+	case 3:
+		L(_T("USB: Super Speed"));
+		break;
+	default:
+		L(_T("USB: N/A"));
+		break;
+	}
 }
 
 
