@@ -733,6 +733,17 @@ LRESULT CgStreamerDlg::OnFileReceived(WPARAM wParam, LPARAM lParam)
 	CString str;
 	str.Format(_T("%s(%lu bytes), %lu bytes received"), ((FILEINFO*)wParam)->name_, ((FILEINFO*)wParam)->size_,(ULONGLONG)lParam);
 	L(str);
+
+	TCHAR path[MAX_PATH];
+	GetCurrentDirectory(MAX_PATH, path);
+
+	CString strParam;
+	strParam += _T("\"");
+	strParam += CString(path) + CString(_T("\\"));
+	strParam += (LPCTSTR)(((FILEINFO*)wParam)->name_);
+	strParam += _T("\"");
+
+	ShellExecute(NULL, _T("open"), _T("C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"), strParam.GetBuffer(), NULL, SW_SHOW);
 	return 0;
 }
 
