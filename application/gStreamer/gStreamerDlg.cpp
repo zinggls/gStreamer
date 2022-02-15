@@ -742,6 +742,7 @@ LRESULT CgStreamerDlg::OnFileReceived(WPARAM wParam, LPARAM lParam)
 	strParam += CString(path) + CString(_T("\\"));
 	strParam += (LPCTSTR)(((FILEINFO*)wParam)->name_);
 	strParam += _T("\"");
+	strParam += _T(" -f");
 
 	ShellExecute(NULL, _T("open"), _T("C:\\Program Files\\VideoLAN\\VLC\\vlc.exe"), strParam.GetBuffer(), NULL, SW_SHOW);
 	return 0;
