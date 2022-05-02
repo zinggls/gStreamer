@@ -125,8 +125,6 @@ public:
 	static float BpsVal(unsigned int size, float sec);
 	COScopeCtrl *m_pGraph;
 	CString m_strSpeed;
-	void ResetDevice();
-	BOOL m_bReset;
 	BOOL sendEP0(CCyControlEndPoint* pCEP, unsigned char* pBuf, LONG& bufSize);
 	void ep0DataXfer(CTL_XFER_TGT_TYPE target, CTL_XFER_REQ_TYPE reqType, CTL_XFER_DIR_TYPE direction,
 		UCHAR reqCode, WORD value, WORD index, unsigned char* buf, LONG bufSize, ULONG timeOut=0);

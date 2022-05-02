@@ -66,7 +66,6 @@ CgStreamerDlg::CgStreamerDlg(CWnd* pParent /*=NULL*/)
 	, m_bPnP_Arrival(FALSE),m_bPnP_Removal(FALSE),m_bPnP_DevNodeChange(FALSE)
 	, m_pGraph(NULL)
 	, m_strSpeed(_T(""))
-	, m_bReset(FALSE)
 {
 	memset(&m_Prev, 0, sizeof(ByteSec));
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
@@ -256,22 +255,13 @@ HCURSOR CgStreamerDlg::OnQueryDragIcon()
 
 BOOL CgStreamerDlg::GetStreamerDevice(CString &errMsg)
 {
-	if (m_pUsbDev) {
-		delete m_pUsbDev->ControlEndPt;
-		delete m_pUsbDev;
-	}
+	if (m_pUsbDev) delete m_pUsbDev;
 	m_pUsbDev = new CCyUSBDevice(this->m_hWnd, CYUSBDRV_GUID, true);
 	if (m_pUsbDev == NULL) {
 		errMsg = _T("Can't get USB Device instance");
 		return FALSE;
 	}
 	
-	if (!m_bReset) {
-		if (m_pUsbDev->ControlEndPt) ResetDevice();
-	}
-	else {
-		if (m_pUsbDev->ControlEndPt) UpdateZingMode();
-	}
 	m_deviceCombo.ResetContent();
 	m_deviceCombo.EnableWindow(FALSE);
 	int devCnt = m_pUsbDev->DeviceCount();
@@ -895,23 +885,6 @@ void CgStreamerDlg::OnMainmenuClearlog()
 float CgStreamerDlg::BpsVal(unsigned int size, float sec)
 {
 	return (float)size / sec;
-}
-
-void CgStreamerDlg::ResetDevice()
-{
-	unsigned char buf[512];
-	ZeroMemory(buf, 512);
-	sprintf_s(reinterpret_cast<char*>(buf), sizeof(buf), "FX3 RST");
-	LONG bytesToSend = 7;
-
-	CCyControlEndPoint* pCEP = m_pUsbDev->ControlEndPt;
-	pCEP->ReqCode = 0x3;
-	if (sendEP0(pCEP, buf, bytesToSend)) {
-		m_bReset = TRUE;
-	}
-	else {
-		m_bReset = FALSE;
-	}
 }
 
 
